@@ -1,6 +1,6 @@
 
 
-#' @name get_species_dataset
+#' @name set_reeffish_datalist
 #' @title Returns species specifc data from the reef fish dataset.
 #'
 #' @description Loads data and splits the observaion table
@@ -10,11 +10,8 @@
 #' @param std_method establishes the standard METHOD of the Reef dataset
 #'
 #' @export
-get_species_dataset<- function(SET, species, std_method){
+set_reeffish_datalist<- function(SET, std_method){
 
-  SET <- SET[SET$GROUP %in% species]
-
-  SET <- SET[order(SET$METHOD)]
 
   #If std_method doesn't match any of the two methods, then throw an error
   set_methods <- unique(SET$METHOD)
@@ -36,5 +33,8 @@ get_species_dataset<- function(SET, species, std_method){
   SET$BLOCK  <- as.factor(SET$BLOCK)
   contrasts(SET$METHOD)<-c(1,-1)
 
-  return(SET)
+  #Split the reef dataset into a list of smaller sets by GROUP value.
+  reeffish_datalist <- split(SET, SET$GROUP)
+
+  return(reeffish_datalist)
 }
