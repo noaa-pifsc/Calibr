@@ -24,8 +24,8 @@ set_reeffish_datalist<- function(SET, std_method){
 
     #Based on renamed METHOD numerical values,
     #Standard method will be the first factor level when METHOD is factorized
-    SET[METHOD==std_method]$METHOD <- paste0("1_",std_method)
-    SET[METHOD==secondary]$METHOD <- paste0("2_",secondary)
+    SET[SET$METHOD==std_method,]$METHOD <- paste0("1_",std_method)
+    SET[SET$METHOD==secondary,]$METHOD <- paste0("2_",secondary)
 
   }
 
