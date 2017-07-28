@@ -8,18 +8,29 @@
 #' @description Sets the geat Calibration Factor
 #'
 #' @param SET Coral Reef Species Dataset
+#' @param min_obs Minimum limit for the number of observations.
 #'
 #' @import data.table
 #' @import stats
 #' @importFrom MASS mvrnorm
 #'
 #' @export
-gcf <- function (SET) {
+gcf <- function (SET, min_obs=10) {
+
+
+  if(class(SET) == "list"){
+    stop("Parameter SET found as a list object.")
+  }
 
 
   #positive-only (Eq. 3, Nadon, et al.)
   POS <- SET[SET$DENSITY>0,]
   glm.pos  <- supressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
+  if(nrow(POS) < min_obs){
+    warning("Number of Postive-only Observations below minimum limit of ", min_obs," .")
+    return(NA)
+  }
+  glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
   #presnce/absence (Eq. 4, Nadon et al. )
   glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
 
