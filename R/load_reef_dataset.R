@@ -12,7 +12,7 @@ load_reef_dataset<- function (file){
 
   #Check if columns are present
   colnames_reef_dataset <- c("BLOCK","REP","GROUP","METHOD","DENSITY","PRESENCE")
-  if(all(names(SET) %in% colnames_reef_dataset)){
+  if(!(all(names(SET) %in% colnames_reef_dataset))){
     invaild_colnames <- names(SET)[!(names(SET) %in% colnames_reef_dataset)]
     stop("Invaild column names found: ", invalid_colnames)
   }
