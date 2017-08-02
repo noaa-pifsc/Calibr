@@ -23,13 +23,19 @@ gcf <- function (SET, min_obs=10) {
   }
 
 
-  #positive-only (Eq. 3, Nadon, et al.)
+
   POS <- SET[SET$DENSITY>0,]
-  glm.pos  <- supressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
   if(nrow(POS) < min_obs){
     warning("Number of Postive-only Observations below minimum limit of ", min_obs," .")
     return(NA)
   }
+  if(length(unique(POS$METHOD)) != 2){
+    nmethods <- length(unique(POS$METHOD))
+    warning("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
+    return(NA)
+  }
+
+  #positive-only (Eq. 3, Nadon, et al.)
   glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
   #presnce/absence (Eq. 4, Nadon et al. )
   glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
