@@ -25,7 +25,9 @@ gcf <- function (SET, min_obs=10) {
 
 
   POS <- SET[SET$DENSITY>0,]
-  if(nrow(POS) < min_obs){
+
+
+  if(nrow(POS) <= min_obs){
     warning("Number of Postive-only Observations below minimum limit of ", min_obs," .")
     return(NA)
   }
