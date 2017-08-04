@@ -1,7 +1,3 @@
-
-
-
-
 #' @name gcf
 #' @title Gear Calibration Factor
 #'
@@ -22,10 +18,7 @@ gcf <- function (SET, min_obs=10) {
     stop("Parameter SET found as a list object.")
   }
 
-
-
   POS <- SET[SET$DENSITY>0,]
-
 
   if(nrow(POS) <= min_obs){
     warning("Number of Postive-only Observations below minimum limit of ", min_obs," .")
