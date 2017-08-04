@@ -5,8 +5,7 @@
 #'
 #' @description Loads data and splits the observaion table
 #'
-#' @param file Reef Fish Dataset Filename
-#' @param species Coral Reef species code
+#' @param SET Coral Reef Dataset
 #' @param std_method establishes the standard METHOD of the Reef dataset
 #'
 #' @export

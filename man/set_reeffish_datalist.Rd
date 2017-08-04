@@ -7,11 +7,9 @@
 set_reeffish_datalist(SET, std_method)
 }
 \arguments{
+\item{SET}{Coral Reef Dataset}
+
 \item{std_method}{establishes the standard METHOD of the Reef dataset}
-
-\item{file}{Reef Fish Dataset Filename}
-
-\item{species}{Coral Reef species code}
 }
 \description{
 Loads data and splits the observaion table
