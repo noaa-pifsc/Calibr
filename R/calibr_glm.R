@@ -8,9 +8,9 @@ gcf <- function (SET) {
 
   #positive-only (Eq. 3, Nadon, et al.)
   POS <- SET[SET$DENSITY>0,]
-  glm.pos  <- supressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
+  glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
   #presnce/absence (Eq. 4, Nadon et al. )
-  glm.pres <- supressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
+  glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
 
 
   # Coefficients and variance-covariance matrix with the (intercept) and METHOD1
