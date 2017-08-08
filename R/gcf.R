@@ -21,13 +21,13 @@ gcf <- function (SET, min_obs=10) {
   POS <- SET[SET$DENSITY>0,]
 
   if(nrow(POS) <= min_obs){
-    warning("Number of Postive-only Observations below minimum limit of ", min_obs," .")
-    return(NA)
+    stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
+
   }
   if(length(unique(POS$METHOD)) != 2){
     nmethods <- length(unique(POS$METHOD))
-    warning("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
-    return(NA)
+    stop("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
+
   }
 
   #positive-only (Eq. 3, Nadon, et al.)
