@@ -35,5 +35,21 @@ set_reeffish_datalist<- function(SET, std_method){
   #Split the reef dataset into a list of smaller sets by GROUP value.
   reeffish_datalist <- split(SET, SET$GROUP)
 
+  #Lapply gcf function for all reef species
+  reeffish_datalist <- lapply(reeffish_datalist,function(X){
+    message("Group: ", unique(X$GROUP))
+    tryCatch(
+      gcf(X),
+      error=function(cond){
+        message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
+        return(NA)
+      },
+      warning=function(cond){
+        message(unique(X$GROUP) , ": " , trimws(cond))
+      }
+    )
+
+  })
+
   return(reeffish_datalist)
 }
