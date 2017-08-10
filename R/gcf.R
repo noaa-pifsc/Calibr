@@ -86,6 +86,6 @@ gcf <- function (SET, min_obs=10) {
   group_lstats[["OPUE_PRESA"]] <- format(mean(OPUE_PRESA), digits=4)
   group_lstats[["OPUE_PRESB"]] <- format(mean(OPUE_PRESB), digits=4)
 
-  return(data.table(group_lstats))
+  return(as.data.table(group_lstats))
 
 }
