@@ -59,6 +59,33 @@ gcf <- function (SET, min_obs=10) {
   OPUE_B <- out.pos$METHODB*out.pres$METHODB
 
   #GCF: GEAR Calibration Factor
-  return( data.table(OPUE_A/OPUE_B ))
+  gcf_df <- data.table(OPUE_A/OPUE_B )
+  gcf_quantile <- format(quantile(gcf_df$V1,c(0.5,.025,0.975),na.rm=T), digits=4)
+  gcf_mean <- format(mean(gcf_df$V1,na.rm=T), digits=4)
+
+
+  OPUE_POSA <- exp(mu.pos[1]+mu.pos[2])
+  OPUE_POSB <- exp(mu.pos[1]-mu.pos[2])
+
+  OPUE_PRESA<- 1/(1+exp(-(mu.pres[1]+mu.pres[2])))
+  OPUE_PRESB<- 1/(1+exp(-(mu.pres[1]-mu.pres[2])))
+
+  group_lstats <- list()
+  group_lstats[["GROUP"]] <- unique(SET$GROUP)
+
+  group_lstats[["GCF"]] <- unname(format(gcf_quantile["50%"], digits=4))
+  group_lstats[["GCF_2.5"]] <- unname(format(gcf_quantile["2.5%"], digits=4))
+  group_lstats[["GCF_95"]] <- unname(format(gcf_quantile["97.5%"], digits=4))
+
+  group_lstats[["OPUE_A"]] <- format(mean(OPUE_A,na.rm=T), digits=4)
+  group_lstats[["OPUE_B"]] <- format(mean(OPUE_B,na.rm=T), digits=4)
+
+  group_lstats[["OPUE_POSA"]] <- format(mean(OPUE_POSA), digits=4)
+  group_lstats[["OPUE_POSB"]] <- format(mean(OPUE_POSB), digits=4)
+
+  group_lstats[["OPUE_PRESA"]] <- format(mean(OPUE_PRESA), digits=4)
+  group_lstats[["OPUE_PRESB"]] <- format(mean(OPUE_PRESB), digits=4)
+
+  return(data.table(group_lstats))
 
 }
