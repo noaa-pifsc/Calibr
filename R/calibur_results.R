@@ -1,6 +1,6 @@
 
 
-#' @name set_reeffish_datalist
+#' @name calibur_results
 #' @title Returns species specifc data from the reef fish dataset.
 #'
 #' @description Loads data and splits the observaion table
@@ -9,7 +9,7 @@
 #' @param std_method establishes the standard METHOD of the Reef dataset
 #'
 #' @export
-set_reeffish_datalist<- function(SET, std_method){
+calibur_results<- function(SET, std_method){
 
 
   #If std_method doesn't match any of the two methods, then throw an error
