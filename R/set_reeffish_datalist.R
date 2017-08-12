@@ -51,5 +51,8 @@ set_reeffish_datalist<- function(SET, std_method){
 
   })
 
-  return(reeffish_datalist)
+  calibrated_lgroups <- reeffish_datalist[!(is.na(reeffish_datalist))]
+  calibr_results <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),calibrated_lgroups))
+
+  return(calibr_results)
 }
