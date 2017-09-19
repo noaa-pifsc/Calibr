@@ -52,6 +52,7 @@ get_reef_datalist<- function(SET, std_method){
   })
 
   calibrated_lgroups <- reeffish_datalist[!(is.na(reeffish_datalist))]
+  #Merges the data frames in the list
   calibr_results <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),calibrated_lgroups))
 
   return(calibr_results)
