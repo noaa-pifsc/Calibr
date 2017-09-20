@@ -36,7 +36,7 @@ get_reef_datalist<- function(SET, std_method){
   reeffish_datalist <- split(SET, SET$GROUP)
 
   #Lapply gcf function for all reef species
-  reeffish_datalist <- lapply(reeffish_datalist,function(X){
+  lgroup_gcf <- lapply(reeffish_datalist,function(X){
     message("Group: ", unique(X$GROUP))
     tryCatch(
       gcf(X),
@@ -52,12 +52,12 @@ get_reef_datalist<- function(SET, std_method){
   })
 
   #Remove GROUP objects that have null(NA) data
-  lgroup_calibrated <- reeffish_datalist[!(is.na(reeffish_datalist))]
+  lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
   #Summary descriptive statistics for each GROUP
   lgroup_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
 
   #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=lgroup_calibrated,SUMMARY=lgroup_summary)
+  calibr_results <- list(LGROUP=reeffish_datalist,SUMMARY=lgroup_summary)
 
   return(calibr_results)
 }
