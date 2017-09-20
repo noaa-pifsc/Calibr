@@ -51,9 +51,13 @@ get_reef_datalist<- function(SET, std_method){
 
   })
 
-  calibrated_lgroups <- reeffish_datalist[!(is.na(reeffish_datalist))]
-  #Merges the data frames in the list
-  calibr_results <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),calibrated_lgroups))
+  #Remove GROUP objects that have null(NA) data
+  lgroup_calibrated <- reeffish_datalist[!(is.na(reeffish_datalist))]
+  #Summary descriptive statistics for each GROUP
+  lgroup_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
+
+  #Return grouped datalist and summary table in a list
+  calibr_results <- list(LGROUP=lgroup_calibrated,SUMMARY=lgroup_summary)
 
   return(calibr_results)
 }
