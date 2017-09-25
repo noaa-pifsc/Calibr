@@ -32,8 +32,13 @@ get_reef_datalist<- function(SET, std_method){
   SET$BLOCK  <- as.factor(SET$BLOCK)
   contrasts(SET$METHOD)<-c(1,-1)
 
+  message("Spliting dataset by GROUP value ... ")
   #Split the reef dataset into a list of smaller sets by GROUP value.
   reeffish_datalist <- split(SET, SET$GROUP)
+
+  message( "===============================================================================\n",
+           "Calculating the proportion of total number of REP w/ positive observations ... \n",
+           "===============================================================================")
 
   #Lapply gcf function for all reef species
   lgroup_gcf <- lapply(reeffish_datalist,function(X){
@@ -51,13 +56,43 @@ get_reef_datalist<- function(SET, std_method){
 
   })
 
+  message("===========================================\n",
+          "Calculating number of REP per Group  ...   \n",
+          "===========================================")
+  #REP stats by GROUP
+  rep_stats <- sapply(reeffish_datalist,function(X){
+    #message("Group: ", unique(X$GROUP))
+    tryCatch(
+      {
+        vec_stats <- rep_summary(X)
+        X <- data.frame(t(vec_stats))
+      },
+      error=function(cond){
+        message("With ", unique(X$GROUP) , ": ", trimws(cond), " Returning NA")
+        return(NA)
+      },
+      warning=function(cond){
+        message("In ", unique(X$GROUP), ": ", trimws(cond))
+      }
+    )
+  })
+
+
+
+
   #Remove GROUP objects that have null(NA) data
   lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
   #Summary descriptive statistics for each GROUP
   lgroup_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
 
-  #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=reeffish_datalist,SUMMARY=lgroup_summary)
+  #REP Summary statistics table for each GROUP
+  rep_stats_table <- suppressMessages(
+    Reduce(function(...)merge(...,all=TRUE), rep_stats[!is.na(rep_stats)]))
 
+  message("Returning Grouped Data and Summaries in a list ...")
+  #Return grouped datalist and summary table in a list
+  calibr_results <- list(LGROUP=reeffish_datalist,SUMMARY=lgroup_summary,REP_SUMMARY=rep_stats_table)
+
+  message("Done.")
   return(calibr_results)
 }
