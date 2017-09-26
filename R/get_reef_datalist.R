@@ -18,6 +18,7 @@ get_reef_datalist<- function(SET, std_method){
   if(!any(std_method %in% set_methods)){
     stop("Invalid method name: '", std_method, "' not found in dataset.")
   }else{
+    message("Setting Standard Catch METHOD ...")
     #Set the other method as secondary.
     secondary <- as.character(set_methods[!(set_methods %in% std_method)])
 
@@ -60,8 +61,7 @@ get_reef_datalist<- function(SET, std_method){
           "Calculating number of REP per Group  ...   \n",
           "===========================================")
   #REP stats by GROUP
-  rep_stats <- sapply(reeffish_datalist,function(X){
-    #message("Group: ", unique(X$GROUP))
+  rep_stats <- sapply(reeffish_datalist,function(X,m){
     tryCatch(
       {
         vec_stats <- rep_summary(X)
@@ -75,7 +75,7 @@ get_reef_datalist<- function(SET, std_method){
         message("In ", unique(X$GROUP), ": ", trimws(cond))
       }
     )
-  })
+  },m=std_method)
 
 
 
