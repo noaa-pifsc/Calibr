@@ -1,5 +1,13 @@
 
-
+#' Site summmary statistics per reef species group
+#'
+#' Calculates descriptive statistics for each GROUP
+#'
+#' @param SET Dataset
+#'
+#' @importFrom dplyr arrange_
+#' @importFrom plyr daply
+#'
 rep_summary <- function(SET) {
 
   if(class(SET) == "list"){
