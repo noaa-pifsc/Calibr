@@ -24,6 +24,7 @@ rep_summary <- function(SET, std_method) {
     stop("Invalid method name: '", std_method, "' not found in dataset.")
   }else{
     #Set the other method as secondary.
+    set_methods <- unique(SET$METHOD)
     secondary_method <- as.character(set_methods[!(set_methods %in% std_method)])
   }
 
@@ -42,14 +43,19 @@ rep_summary <- function(SET, std_method) {
   #From this BLOCK list, create a REP list (all REPs where that GROUP could potentially have been seen)
   setblock_2method <- SET[SET$BLOCK %in% lblock,]
 
-  #From this REP list, calculate the number of REP <------ this is the number of REPs where the GROUP could have been seen.
-  rep_seengroup <- unlist(setblock_2method["REP"], use.names=FALSE)
-  nrep_seengroup <- length(rep_seengroup)
+  seengroup_pos <- setblock_2method[setblock_2method$DENSITY >0,]
 
 
-  #From the same REP list, calculate how many REP have a positive (i.e. not a zero) observation for each METHOD.
-  rep_seengroup_pos <- unlist(setblock_2method[setblock_2method$DENSITY >0,]["REP"], use.names=FALSE)
-  nrep_seengroup_pos <- length(rep_seengroup_pos)
 
-  return(c(GROUP=unique(SET$GROUP), NUM_REP=nrep_seengroup, NUM_REP_POS=nrep_seengroup_pos, use.names=TRUE))
+  #From setblock_2method, calculate the number of REP <------ this is the number of REPs where the GROUP could have
+  #been seen, for each METHOD.
+  #From seengroup_pos, calculate how many REP have a positive (i.e. not a zero) observation for each METHOD.
+  return(c(GROUP=unique(SET$GROUP),
+           NREP_TOTAL=length(rep_seengroup),
+           NREP_STD_METHOD=nrow(setblock_2method[setblock_2method["METHOD"] == std_method,]["REP"]),
+           NREP_SEC_METHOD=nrow(setblock_2method[setblock_2method["METHOD"] == secondary_method,]["REP"]),
+           POSREP_TOTAL=nrow(seengroup_pos["REP"]),
+           POSREP_STD_METHOD=nrow(seengroup_pos[seengroup_pos["METHOD"] == std_method,]["REP"]),
+           POSREP_SEC_METHOD=nrow(seengroup_pos[seengroup_pos["METHOD"] == secondary_method,]["REP"]),
+           use.names=TRUE))
 }
