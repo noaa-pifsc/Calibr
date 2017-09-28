@@ -1,7 +1,7 @@
 Package: Calibr
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.0.0.001
+Version: 0.0.0.002
 Author: Eric Fletcher, Marc Nadon
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
@@ -14,5 +14,7 @@ Depends:
     MASS,
     methods,
     utils,
+    plyr,
+    dplyr,
     data.table
 RoxygenNote: 6.0.1
