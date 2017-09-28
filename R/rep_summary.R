@@ -53,7 +53,7 @@ rep_summary <- function(SET, std_method) {
   #been seen, for each METHOD.
   #From seengroup_pos, calculate how many REP have a positive (i.e. not a zero) observation for each METHOD.
   return(c(GROUP=unique(SET$GROUP),
-           NREP_TOTAL=length(rep_seengroup),
+           NREP_TOTAL=nrow(setblock_2method["REP"]),
            NREP_STD_METHOD=nrow(setblock_2method[setblock_2method["METHOD"] == std_method,]["REP"]),
            NREP_SEC_METHOD=nrow(setblock_2method[setblock_2method["METHOD"] == secondary_method,]["REP"]),
            POSREP_TOTAL=nrow(seengroup_pos["REP"]),
