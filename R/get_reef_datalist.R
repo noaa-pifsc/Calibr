@@ -33,6 +33,9 @@ get_reef_datalist<- function(SET, std_method){
   SET$BLOCK  <- as.factor(SET$BLOCK)
   contrasts(SET$METHOD)<-c(1,-1)
 
+  #Presume that the 1st level of METHOD factor will always be the standard method.
+  std_method_factorname <- as.character(levels(SET$METHOD)[1])
+
   message("Spliting dataset by GROUP value ... ")
   #Split the reef dataset into a list of smaller sets by GROUP value.
   reeffish_datalist <- split(SET, SET$GROUP)
@@ -60,11 +63,12 @@ get_reef_datalist<- function(SET, std_method){
   message("===========================================\n",
           "Calculating number of REP per Group  ...   \n",
           "===========================================")
+
   #REP stats by GROUP
   rep_stats <- sapply(reeffish_datalist,function(X,m){
     tryCatch(
       {
-        vec_stats <- rep_summary(X)
+        vec_stats <- rep_summary(X,m)
         X <- data.frame(t(vec_stats))
       },
       error=function(cond){
@@ -75,7 +79,8 @@ get_reef_datalist<- function(SET, std_method){
         message("In ", unique(X$GROUP), ": ", trimws(cond))
       }
     )
-  },m=std_method)
+  },
+  m=std_method_factorname)
 
 
 
