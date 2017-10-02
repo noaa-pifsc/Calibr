@@ -3,6 +3,7 @@
 export(gcf)
 export(get_reef_datalist)
 export(load_reef_dataset)
+export(rep_summary)
 import(data.table)
 import(methods)
 import(stats)

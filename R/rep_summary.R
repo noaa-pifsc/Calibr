@@ -9,6 +9,7 @@
 #' @importFrom dplyr arrange_
 #' @importFrom plyr daply
 #'
+#' @export
 rep_summary <- function(SET, std_method) {
 
   if(class(SET) == "list"){
