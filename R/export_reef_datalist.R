@@ -28,11 +28,11 @@ export_reef_datalist <- function(datalist){
 
   }
 
-  # if(all(names(datalist) %in% c("LGROUP", "SUMMARY", "REP_SUMMARY" ))){
-  #   missingNames <-names(datalist)[!(names(datalist) %in% c("LGROUP", "SUMMARY", "REP_SUMMARY" ))]
-  #
-  #   stop("Missing required reef datalist field.")
-  # }
+  #Check if datalist has the names "LGROUP", "SUMMARY", and "REP_SUMMARY" in datalist
+  if(!all(names(datalist) %in% c("LGROUP", "SUMMARY", "REP_SUMMARY" ))){
+     missing_listNames <-names(datalist)[!(names(datalist) %in% c("LGROUP", "SUMMARY", "REP_SUMMARY" ))]
+     stop("Invalid reef datalist fields: ", paste(missing_listNames,collapse = ", "))
+  }
 
 
 
