@@ -5,15 +5,16 @@
 #' seperate data files.
 #'
 #' @param datalist Calibr datalist
+#' @param outdir Location to export data and summaries to. Default location is user's \code{HOME} directory
 #'
 #' @export
-export_reef_datalist <- function(datalist){
+export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
 
   if(class(datalist) != "list"){
     stop("Parameter datalist not a list object.")
   }
 
-  #Check if datalist has the names "LGROUP", "SUMMARY", and "REP_SUMMARY" in datalist
+
   str.datalist <- list("list",
                        c("data.table","data.frame"),
                        "data.frame")
@@ -33,6 +34,21 @@ export_reef_datalist <- function(datalist){
      missing_listNames <-names(datalist)[!(names(datalist) %in% c("LGROUP", "SUMMARY", "REP_SUMMARY" ))]
      stop("Invalid reef datalist fields: ", paste(missing_listNames,collapse = ", "))
   }
+
+  #If dir is default, create an output subdirectory from the user's HOME location.
+  if(outdir == Sys.getenv("HOME")){
+    outdir <- gsub("\\\\","",tempfile(pattern="CalibrRun_",tmpdir= file.path(Sys.getenv("R_USER"),"\\")))
+  }
+
+
+  #LGROUP
+
+
+  #SUMMARY
+
+
+  #REP_SUMMARY
+
 
 
 
