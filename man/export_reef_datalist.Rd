@@ -4,10 +4,12 @@
 \alias{export_reef_datalist}
 \title{Export reef data and summaries to data files.}
 \usage{
-export_reef_datalist(datalist)
+export_reef_datalist(datalist, outdir = Sys.getenv("HOME"))
 }
 \arguments{
 \item{datalist}{Calibr datalist}
+
+\item{outdir}{Location to export data and summaries to. Default location is user's \code{HOME} directory}
 }
 \description{
 Option to export grouped reeffish datasets, Reefish Group Summary Table, and REP summaries in
