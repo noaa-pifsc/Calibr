@@ -38,16 +38,19 @@ export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
   #If dir is default, create an output subdirectory from the user's HOME location.
   if(outdir == Sys.getenv("HOME")){
     outdir <- gsub("\\\\","",tempfile(pattern="CalibrRun_",tmpdir= file.path(Sys.getenv("R_USER"),"\\")))
+    dir.create(outdir)
   }
 
 
   #LGROUP
-
+  reeffish_grouped_datalist <- datalist[["LGROUP"]]
+  save(reeffish_grouped_datalist, file = file.path(outdir,"reeffish_grouped.RData"))
 
   #SUMMARY
-
+  write.csv(datalist[["SUMMARY"]], file = file.path(outdir,"summary_table.csv"), row.names = FALSE)
 
   #REP_SUMMARY
+  write.csv(datalist[["REP_SUMMARY"]], file = file.path(outdir,"REP_summary.csv"), row.names = FALSE)
 
 
 
