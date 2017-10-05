@@ -10,11 +10,12 @@
 #' @export
 export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
 
+  #Check datalist is a list
   if(class(datalist) != "list"){
     stop("Parameter datalist not a list object.")
   }
 
-
+  #Check datalist contents have the appropriate data structures.
   str.datalist <- list("list",
                        c("data.table","data.frame"),
                        "data.frame")
@@ -39,6 +40,11 @@ export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
   if(outdir == Sys.getenv("HOME")){
     outdir <- gsub("\\\\","",tempfile(pattern="CalibrRun_",tmpdir= file.path(Sys.getenv("R_USER"),"\\")))
     dir.create(outdir)
+  }else{
+    #check if outdir exists in user's system. If not return error message
+    if(!(dir.exists(outdir))){
+      stop("Location of output directory was not found or inaccessible : \n",outdir)
+    }
   }
 
 
