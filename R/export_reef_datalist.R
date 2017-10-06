@@ -53,7 +53,7 @@ export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
   #LGROUP
   message("Saving Grouped Coral Reef Data ...")
   reeffish_grouped_datalist <- datalist[["LGROUP"]]
-  save(reeffish_grouped_datalist, file = file.path(outdir,"reeffish_grouped.RData"))
+  saveRDS(reeffish_grouped_datalist, file = file.path(outdir,"reeffish_grouped.Rds"))
 
   #SUMMARY
   message("Saving GCF and OPUE Summaries to file ...")
