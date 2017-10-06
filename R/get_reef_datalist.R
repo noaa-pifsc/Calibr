@@ -97,7 +97,12 @@ get_reef_datalist<- function(SET, std_method){
   message("Returning Grouped Data and Summaries in a list ...")
   #Return grouped datalist and summary table in a list
   calibr_results <- list(LGROUP=reeffish_datalist,SUMMARY=lgroup_summary,REP_SUMMARY=rep_stats_table)
-
   message("Done.")
+
+  message("\n---")
+  message("Number of GROUPS: ", length(reeffish_datalist))
+  message("Number of sufficent REPs: ", length(lgroup_calibrated))
+  message("")
+
   return(calibr_results)
 }
