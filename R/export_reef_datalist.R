@@ -39,27 +39,31 @@ export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
   #If dir is default, create an output subdirectory from the user's HOME location.
   if(outdir == Sys.getenv("HOME")){
     outdir <- gsub("\\\\","",tempfile(pattern="CalibrRun_",tmpdir= file.path(Sys.getenv("R_USER"),"\\")))
+    message("Creating output directory: ", outdir ," ...")
     dir.create(outdir)
   }else{
     #check if outdir exists in user's system. If not return error message
     if(!(dir.exists(outdir))){
       stop("Location of output directory was not found or inaccessible : \n",outdir)
     }
+    message("Output Directory: ", outdir)
   }
-
+  message("Exporting grouped data and summary tables to output directory ...")
 
   #LGROUP
+  message("Saving Grouped Coral Reef Data ...")
   reeffish_grouped_datalist <- datalist[["LGROUP"]]
   save(reeffish_grouped_datalist, file = file.path(outdir,"reeffish_grouped.RData"))
 
   #SUMMARY
+  message("Saving GCF and OPUE Summaries to file ...")
   write.csv(datalist[["SUMMARY"]], file = file.path(outdir,"summary_table.csv"), row.names = FALSE)
 
   #REP_SUMMARY
+  message("Saving REP Summary Table to file ...")
   write.csv(datalist[["REP_SUMMARY"]], file = file.path(outdir,"REP_summary.csv"), row.names = FALSE)
 
-
-
-
+  message("Done.")
+  message("Grouped data and summary tables have been to:\n", outdir)
 
 }
