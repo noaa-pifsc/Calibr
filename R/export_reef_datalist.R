@@ -7,6 +7,8 @@
 #' @param datalist Calibr datalist
 #' @param outdir Location to export data and summaries to. Default location is user's \code{HOME} directory
 #'
+#' @importFrom utils write.csv
+#'
 #' @export
 export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
 
