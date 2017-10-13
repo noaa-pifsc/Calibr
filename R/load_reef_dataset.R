@@ -1,14 +1,15 @@
 
 
-#' @name load_reef_dataset
-#' @title Returns the reef survey dataset object from csv file.
+#' Create a survey dataset object from csv file.
 #'
-#' @description Loads the Coral Reef Reef Survey dataset from comma seperated values formatted file.
-#' This funcion will throw an error if either the input dataset does not have the NOAA-CRED Pacific-wide
-#' dataset column names ("BLOCK","REP","GROUP","METHOD","DENSITY","PRESENCE"), or it does not not find
-#' exactly 2 unique METHOD values in the input dataset.
+#' Loads a survey dataset from an exising survey dataset *.CSV (comma seperated values) file.
+#' This funcion will throw an error if the input dataset does not have the NOAA-CRED Pacific-wide
+#' dataset column names (\code{BLOCK},\code{REP},\code{GROUP},\code{METHOD},\code{DENSITY},\code{PRESENCE}),
+#' or it does not not find exactly 2 unique \code{METHOD} values in the input dataset.
 #'
-#' @param file Reef survey dataet filename
+#' @param file Location of survey dataset
+#'
+#' @return The function returns a data.frame table, should validation checks are met.
 #'
 #' @export
 load_reef_dataset<- function (file){

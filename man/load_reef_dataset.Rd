@@ -2,16 +2,19 @@
 % Please edit documentation in R/load_reef_dataset.R
 \name{load_reef_dataset}
 \alias{load_reef_dataset}
-\title{Returns the reef survey dataset object from csv file.}
+\title{Create a survey dataset object from csv file.}
 \usage{
 load_reef_dataset(file)
 }
 \arguments{
-\item{file}{Reef survey dataet filename}
+\item{file}{Location of survey dataset}
+}
+\value{
+The function returns a data.frame table, should validation checks are met.
 }
 \description{
-Loads the Coral Reef Reef Survey dataset from comma seperated values formatted file.
-This funcion will throw an error if either the input dataset does not have the NOAA-CRED Pacific-wide
-dataset column names ("BLOCK","REP","GROUP","METHOD","DENSITY","PRESENCE"), or it does not not find
-exactly 2 unique METHOD values in the input dataset.
+Loads a survey dataset from an exising survey dataset *.CSV (comma seperated values) file.
+This funcion will throw an error if the input dataset does not have the NOAA-CRED Pacific-wide
+dataset column names (\code{BLOCK},\code{REP},\code{GROUP},\code{METHOD},\code{DENSITY},\code{PRESENCE}),
+or it does not not find exactly 2 unique \code{METHOD} values in the input dataset.
 }
