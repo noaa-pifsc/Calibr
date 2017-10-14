@@ -2,15 +2,27 @@
 % Please edit documentation in R/get_reef_datalist.R
 \name{get_reef_datalist}
 \alias{get_reef_datalist}
-\title{Returns species specifc data from the reef fish dataset.}
+\title{Survey dataset by species group and summaries}
 \usage{
 get_reef_datalist(SET, std_method)
 }
 \arguments{
-\item{SET}{Coral Reef Dataset}
+\item{SET}{Survey Dataset}
 
-\item{std_method}{establishes the standard METHOD of the Reef dataset}
+\item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
+}
+\value{
+List object with three items:
+\itemize{
+  \item A list containing the Survey dataset split by species group.
+  \item A data.table object with the GCF and OPUE summaries by species group with positive observations.
+  \item Data frame summation of number of \code{REP} by species group.
+}
 }
 \description{
-Loads data and splits the observaion table
+Using the input survey dataset, the function does three major tasks. First, it splits
+the input dataset by its \code{GROUP} value. The split dataset is used for the
+remaining tasks: Summarizing the Gear Calibration Vaules (GCF) and Observed Per Unit
+Effort (OPUE) by species group with positive observations, plus giving a summary of
+total REP for each species group.
 }

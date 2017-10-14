@@ -1,12 +1,22 @@
 
 
-#' @name get_reef_datalist
-#' @title Returns species specifc data from the reef fish dataset.
+#' Survey dataset by species group and summaries
 #'
-#' @description Loads data and splits the observaion table
+#' Using the input survey dataset, the function does three major tasks. First, it splits
+#' the input dataset by its \code{GROUP} value. The split dataset is used for the
+#' remaining tasks: Summarizing the Gear Calibration Vaules (GCF) and Observed Per Unit
+#' Effort (OPUE) by species group with positive observations, plus giving a summary of
+#' total REP for each species group.
 #'
-#' @param SET Coral Reef Dataset
-#' @param std_method establishes the standard METHOD of the Reef dataset
+#' @param SET Survey Dataset
+#' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
+#'
+#' @return List object with three items:
+#' \itemize{
+#'   \item A list containing the Survey dataset split by species group.
+#'   \item A data.table object with the GCF and OPUE summaries by species group with positive observations.
+#'   \item Data frame summation of number of \code{REP} by species group.
+#' }
 #'
 #' @export
 get_reef_datalist<- function(SET, std_method){

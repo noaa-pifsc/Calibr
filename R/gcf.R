@@ -1,7 +1,7 @@
-#' @name gcf
-#' @title Gear Calibration Factor
+
+#' Gear Calibration Factor summary table
 #'
-#' @description Sets the geat Calibration Factor
+#' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
 #'
 #' @param SET Coral Reef Species Dataset
 #' @param min_obs Minimum limit for the number of observations.

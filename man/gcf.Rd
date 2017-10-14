@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcf.R
 \name{gcf}
 \alias{gcf}
-\title{Gear Calibration Factor}
+\title{Gear Calibration Factor summary table}
 \usage{
 gcf(SET, min_obs = 10)
 }
@@ -12,5 +12,5 @@ gcf(SET, min_obs = 10)
 \item{min_obs}{Minimum limit for the number of observations.}
 }
 \description{
-Sets the geat Calibration Factor
+Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
 }
