@@ -3,7 +3,7 @@
 #'
 #' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
 #'
-#' @param SET Coral Reef Species Dataset
+#' @param SET Survey Dataset
 #' @param min_obs Minimum limit for the number of observations.
 #'
 #' @import data.table

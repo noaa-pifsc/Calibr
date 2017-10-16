@@ -3,8 +3,7 @@
 #'
 #' Calculates descriptive statistics for each GROUP
 #'
-#' @param SET Dataset
-#' @param std_method Establishes the standard METHOD of the Reef dataset
+#' @inheritParams get_reef_datalist
 #'
 #' @importFrom dplyr arrange_
 #' @importFrom plyr daply

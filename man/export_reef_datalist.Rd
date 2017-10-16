@@ -7,11 +7,21 @@
 export_reef_datalist(datalist, outdir = Sys.getenv("HOME"))
 }
 \arguments{
-\item{datalist}{Calibr datalist}
+\item{datalist}{List containing the Grouped dataset and summaries from \code{\link{get_reef_datalist}}}
 
 \item{outdir}{Location to export data and summaries to. Default location is user's \code{HOME} directory}
 }
 \description{
-Option to export grouped reeffish datasets, Reefish Group Summary Table, and REP summaries in
+Option to export grouped survey datasets, the GCF/OPUE Summary Table, and REP summaries in
 seperate data files.
+}
+\details{
+These following datalist objects will be written to the location, defined by \code{outdir}.
+\itemize{
+  \item The Grouped survey dataset object will be as saved as \code{reeffish_grouped.Rds}.
+  \item The GCF and OPUE summaries will be saved as \code{summary_table.csv}.
+  \item The \code{REP} count by species group summary will be saved as \code{REP_summary.csv}.
+}
+
+If the user doesn't specify a output directory, then a new directory will be generated from the user's HOME location.
 }

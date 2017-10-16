@@ -7,7 +7,7 @@
 gcf(SET, min_obs = 10)
 }
 \arguments{
-\item{SET}{Coral Reef Species Dataset}
+\item{SET}{Survey Dataset}
 
 \item{min_obs}{Minimum limit for the number of observations.}
 }

@@ -7,9 +7,9 @@
 rep_summary(SET, std_method)
 }
 \arguments{
-\item{SET}{Dataset}
+\item{SET}{Survey Dataset}
 
-\item{std_method}{Establishes the standard METHOD of the Reef dataset}
+\item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 }
 \description{
 Calculates descriptive statistics for each GROUP
