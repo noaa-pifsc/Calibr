@@ -21,6 +21,40 @@
 #' @export
 export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
 
+  tryCatch(
+    {
+      #If dir is default, create an output subdirectory from the user's HOME location.
+      if(outdir == Sys.getenv("HOME")){
+        calibr_home <- file.path(outdir, "Calibr")
+
+        if(!dir.exists(calibr_home)){
+          message("Creating directory for Calibr runs: ", calibr_home ," ...")
+          dir.create(calibr_home)
+        }
+
+        outdir <- file.path(calibr_home,basename(tempfile(pattern="CalibrRun_")))
+        message("Creating output directory: ", outdir ," ...")
+        dir.create(outdir)
+      }else{
+        #check if outdir exists in user's system. If not return error message
+        if(!(dir.exists(outdir))){
+          stop("Location of output directory was not found or inaccessible : \n",outdir)
+        }
+        message("Output Directory: ", outdir)
+      }
+    },
+    error=function(cond){
+      message(cond)
+      return(NULL)
+    }
+  )
+
+  message("Exporting grouped data and summary tables to output directory ...")
+
+
+
+
+
   #Check datalist is a list
   if(class(datalist) != "list"){
     stop("Parameter datalist not a list object.")
@@ -47,19 +81,6 @@ export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
      stop("Invalid reef datalist fields: ", paste(missing_listNames,collapse = ", "))
   }
 
-  #If dir is default, create an output subdirectory from the user's HOME location.
-  if(outdir == Sys.getenv("HOME")){
-    outdir <- gsub("\\\\","",tempfile(pattern="CalibrRun_",tmpdir= file.path(Sys.getenv("R_USER"),"\\")))
-    message("Creating output directory: ", outdir ," ...")
-    dir.create(outdir)
-  }else{
-    #check if outdir exists in user's system. If not return error message
-    if(!(dir.exists(outdir))){
-      stop("Location of output directory was not found or inaccessible : \n",outdir)
-    }
-    message("Output Directory: ", outdir)
-  }
-  message("Exporting grouped data and summary tables to output directory ...")
 
   #LGROUP
   message("Saving Grouped Coral Reef Data ...")
