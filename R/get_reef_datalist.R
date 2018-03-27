@@ -1,5 +1,4 @@
 
-
 #' Survey dataset by species group and summaries
 #'
 #' Using the input survey dataset, the function does three major tasks. First, it splits
@@ -19,6 +18,7 @@
 #' }
 #'
 #' @export
+#'
 get_reef_datalist<- function(SET, std_method){
 
 
