@@ -34,11 +34,13 @@ rep_summary <- function(SET, std_method) {
   }
 
   #Sort Input Dataframe by "BLOCK" and (Standard) METHOD. plyr functions auto-sorts their output.
-  SET <- dplyr::arrange_(SET,"BLOCK", "METHOD")
+  #SET <- dplyr::arrange_(SET,"BLOCK", "METHOD")
+  SET <- plyr::arrange(SET,BLOCK, METHOD)
 
   #Make a vector of all BLOCKs where the GROUP was seen at least once by both METHODs.
   #require(plyr)
-  lblock <- plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
+  #lblock <- plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
+  plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
 
   lblock <- names(lblock)[lblock & complete.cases(lblock)] #complete.cases ~ no NA's
 
