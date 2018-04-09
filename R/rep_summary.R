@@ -40,7 +40,7 @@ rep_summary <- function(SET, std_method) {
   #Make a vector of all BLOCKs where the GROUP was seen at least once by both METHODs.
   #require(plyr)
   lblock <- plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
-  #plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
+  #lblock <- plyr::daply(SET, "BLOCK", function(X, m){ unique(X["METHOD"]) %in% m } , m=unique(SET["METHOD"]))
 
   lblock <- names(lblock)[lblock & complete.cases(lblock)] #complete.cases ~ no NA's
 
