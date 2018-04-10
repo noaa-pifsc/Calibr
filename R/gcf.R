@@ -30,6 +30,12 @@ gcf <- function (SET, min_obs=10) {
 
   }
 
+
+  SET$METHOD <- as.factor(SET$METHOD)
+  SET$BLOCK <- as.factor(SET$BLOCK)
+  contrasts(SET$METHOD) <- c(1,-1)
+  contrasts(SET$BLOCK) <- "contr.sum"
+
   #positive-only (Eq. 3, Nadon, et al.)
   glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
   #presnce/absence (Eq. 4, Nadon et al. )
@@ -59,7 +65,7 @@ gcf <- function (SET, min_obs=10) {
   OPUE_B <- out.pos$METHODB*out.pres$METHODB
 
   #GCF: GEAR Calibration Factor
-  gcf_df <- data.table(OPUE_A/OPUE_B )
+  gcf_df <- data.table(OPUE_B/OPUE_A )
   gcf_quantile <- format(quantile(gcf_df$V1,c(0.5,.025,0.975),na.rm=T), digits=4)
   gcf_mean <- format(mean(gcf_df$V1,na.rm=T), digits=4)
 
@@ -77,14 +83,14 @@ gcf <- function (SET, min_obs=10) {
   group_lstats[["GCF_2.5"]] <- unname(format(gcf_quantile["2.5%"], digits=4))
   group_lstats[["GCF_95"]] <- unname(format(gcf_quantile["97.5%"], digits=4))
 
-  group_lstats[["OPUE_A"]] <- format(mean(OPUE_A,na.rm=T), digits=4)
-  group_lstats[["OPUE_B"]] <- format(mean(OPUE_B,na.rm=T), digits=4)
+  group_lstats[["OPUE_A"]] <- format(median(OPUE_A,na.rm=T), digits=4)
+  group_lstats[["OPUE_B"]] <- format(median(OPUE_B,na.rm=T), digits=4)
 
-  group_lstats[["OPUE_POSA"]] <- format(mean(OPUE_POSA), digits=4)
-  group_lstats[["OPUE_POSB"]] <- format(mean(OPUE_POSB), digits=4)
+  group_lstats[["OPUE_POSA"]] <- format(median(OPUE_POSA), digits=4)
+  group_lstats[["OPUE_POSB"]] <- format(median(OPUE_POSB), digits=4)
 
-  group_lstats[["OPUE_PRESA"]] <- format(mean(OPUE_PRESA), digits=4)
-  group_lstats[["OPUE_PRESB"]] <- format(mean(OPUE_PRESB), digits=4)
+  group_lstats[["OPUE_PRESA"]] <- format(median(OPUE_PRESA), digits=4)
+  group_lstats[["OPUE_PRESB"]] <- format(median(OPUE_PRESB), digits=4)
 
   return(as.data.table(group_lstats))
 
