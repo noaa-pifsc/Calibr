@@ -30,11 +30,13 @@ gcf <- function (SET, min_obs=10) {
 
   }
 
-
+  SET$GROUP  <- as.factor(SET$GROUP)
   SET$METHOD <- as.factor(SET$METHOD)
-  SET$BLOCK <- as.factor(SET$BLOCK)
+  SET$BLOCK  <- as.factor(SET$BLOCK)
+
   contrasts(SET$METHOD) <- c(1,-1)
-  contrasts(SET$BLOCK) <- "contr.sum"
+  contrasts(SET$BLOCK)  <- "contr.sum"
+  contrasts(SET$GROUP)  <- "contr.sum"
 
   #positive-only (Eq. 3, Nadon, et al.)
   glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
