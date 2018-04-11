@@ -41,12 +41,8 @@ get_reef_datalist<- function(SET, std_method){
 
   }
 
-  SET$METHOD <- as.factor(SET$METHOD)
-  SET$BLOCK  <- as.factor(SET$BLOCK)
-  contrasts(SET$METHOD)<-c(1,-1)
-
   #Presume that the 1st level of METHOD factor will always be the standard method.
-  std_method_factorname <- as.character(levels(SET$METHOD)[1])
+  std_method_factorname <- paste0("1_",std_method)
 
   message("Spliting dataset by GROUP value ... ")
   #Split the reef dataset into a list of smaller sets by GROUP value.
