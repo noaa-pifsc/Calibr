@@ -21,6 +21,8 @@
 #'
 get_reef_datalist<- function(SET, std_method){
 
+  # Insure that the input dataset is of the format data.table to prevent errors
+  SET <- data.frame(SET)
 
   #If std_method doesn't match any of the two methods, then throw an error
   set_methods <- unique(SET$METHOD)
