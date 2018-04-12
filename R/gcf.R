@@ -11,7 +11,7 @@
 #' @importFrom MASS mvrnorm
 #'
 #' @export
-gcf <- function (SET, min_obs=10) {
+gcf <- function (SET, min_obs=10,Standard) {
 
 
   if(class(SET) == "list"){
@@ -32,9 +32,14 @@ gcf <- function (SET, min_obs=10) {
 
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
-
   contrasts(SET$METHOD) <- c(1,-1)
   contrasts(SET$BLOCK)  <- "contr.sum"
+
+  POS$METHOD <- as.factor(POS$METHOD)
+  POS$BLOCK  <- as.factor(POS$BLOCK)
+  contrasts(POS$METHOD) <- c(1,-1)
+  contrasts(POS$BLOCK)  <- "contr.sum"
+
 
   #positive-only (Eq. 3, Nadon, et al.)
   glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
@@ -42,55 +47,63 @@ gcf <- function (SET, min_obs=10) {
   glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
 
 
-  # Coefficients and variance-covariance matrix with the (intercept) and METHOD1
-  mu.pos  <-c(coef(glm.pos)[1],coef(glm.pos)[2])
-  mu.pres <-c(coef(glm.pres)[1],coef(glm.pres)[2])
-  vcov.pos <- vcov(glm.pos)[1:2,1:2]
-  vcov.pres <- vcov(glm.pres)[1:2,1:2]
-  sigma.pos <- sigma(glm.pos)
+  # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
+  mu.pres.method    <- glm.pres$coefficients[2]
+  SD.pres.method    <- summary(glm.pres)$coefficients[2,2]
+  GCF.pres          <- mu.pres.method+mu.pres.method
+  pres.method       <- rnorm(n=1000,mean=mu.pres.method,sd=SD.pres.method)
+  GCF.pres.dist     <- (pres.method+pres.method) # Additive method effect in logit space
+  GCF.pres.quantile <- format(quantile(GCF.pres.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
-  # Monte Carlo to obtain Gear Calibration Factors with conf. intervals
-  out.pos <- data.table( mvrnorm(n=10000, mu.pos, vcov.pos)     )
-  colnames(out.pos)<- c("B0","B1")
-  out.pos$METHODA <- exp(out.pos$B0+out.pos$B1+sigma.pos^2/2)
-  out.pos$METHODB <- exp(out.pos$B0-out.pos$B1+sigma.pos^2/2)
+  mu.pos.method     <- glm.pos$coefficients[2]
+  SD.pos.method     <- summary(glm.pos)$coefficients[2,2]
+  GCF.pos           <- exp(-mu.pos.method)/exp(mu.pos.method)
+  pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
+  GCF.pos.dist           <- exp(-pos.method)/exp(pos.method)
+  GCF.pos.quantile  <- format(quantile(GCF.pos.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
-  out.pres <- data.table(   mvrnorm(n=10000,mu.pres,vcov.pres)     )
-  colnames(out.pres)<- c("B0","B1")
-  out.pres$METHODA <- 1/(1+exp(-(out.pres$B0+out.pres$B1)))
-  out.pres$METHODB <- 1/(1+exp(-(out.pres$B0-out.pres$B1)))
+  # Convert original dataset using the GCFs to confirm that model worked correctly
+  SET <- data.table(SET)
+  POS <- data.table(POS)
+  S.pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
+  S.pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
+  S       <- merge(S.pres,S.pos)
+  S$OPUE  <- S$PRES*S$POS
 
-  #Observations Per Unit Effort.
-  OPUE_A <- out.pos$METHODA*out.pres$METHODA
-  OPUE_B <- out.pos$METHODB*out.pres$METHODB
+  S$PRES.CAL <- S$PRES
+  S$POS.CAL  <- S$POS
+  S$OPUE.CAL <- S$OPUE
 
-  #GCF: GEAR Calibration Factor
-  gcf_df <- data.table(OPUE_B/OPUE_A )
-  gcf_quantile <- format(quantile(gcf_df$V1,c(0.5,.025,0.975),na.rm=T), digits=4)
-  gcf_mean <- format(mean(gcf_df$V1,na.rm=T), digits=4)
+  require(boot)
+  S[METHOD!=Standard]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=Standard]$PRES ))
+  S[METHOD!=Standard]$POS.CAL  <- S[METHOD!=Standard]$POS/GCF.pos
+  S[METHOD!=Standard]$OPUE.CAL <- S[METHOD!=Standard]$PRES.CAL*S[METHOD!=Standard]$POS.CAL
 
+  S <- cbind(S,t(GCF.pres.quantile))
+  colnames(S)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
+  S <- cbind(S,t(GCF.pos.quantile))
+  colnames(S)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
 
-  OPUE_POSA <- exp(mu.pos[1]+mu.pos[2])
-  OPUE_POSB <- exp(mu.pos[1]-mu.pos[2])
-
-  OPUE_PRESA<- 1/(1+exp(-(mu.pres[1]+mu.pres[2])))
-  OPUE_PRESB<- 1/(1+exp(-(mu.pres[1]-mu.pres[2])))
-
+  # Populate output list
   group_lstats <- list()
   group_lstats[["GROUP"]] <- unique(SET$GROUP)
+  group_lstats[["METHOD"]] <- unique(SET$METHOD)
 
-  group_lstats[["GCF"]] <- unname(format(gcf_quantile["50%"], digits=4))
-  group_lstats[["GCF_2.5"]] <- unname(format(gcf_quantile["2.5%"], digits=4))
-  group_lstats[["GCF_95"]] <- unname(format(gcf_quantile["97.5%"], digits=4))
+  group_lstats[["GCF.PRES"]]     <- unname(format(GCF.pres.quantile["50%"], digits=2))
+  group_lstats[["GCF.PRES_2.5"]] <- unname(format(GCF.pres.quantile["2.5%"], digits=2))
+  group_lstats[["GCF.PRES_95"]]  <- unname(format(GCF.pres.quantile["97.5%"], digits=2))
 
-  group_lstats[["OPUE_A"]] <- format(median(OPUE_A,na.rm=T), digits=4)
-  group_lstats[["OPUE_B"]] <- format(median(OPUE_B,na.rm=T), digits=4)
+  group_lstats[["GCF.POS"]]     <- unname(format(GCF.pos.quantile["50%"], digits=2))
+  group_lstats[["GCF.POS_2.5"]] <- unname(format(GCF.pos.quantile["2.5%"], digits=2))
+  group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
 
-  group_lstats[["OPUE_POSA"]] <- format(median(OPUE_POSA), digits=4)
-  group_lstats[["OPUE_POSB"]] <- format(median(OPUE_POSB), digits=4)
+  group_lstats[["PRES"]] <- format(S$PRES, digits=2)
+  group_lstats[["POS"]]  <- format(S$POS, digits=2)
+  group_lstats[["OPUE"]] <- format(S$OPUE, digits=2)
 
-  group_lstats[["OPUE_PRESA"]] <- format(median(OPUE_PRESA), digits=4)
-  group_lstats[["OPUE_PRESB"]] <- format(median(OPUE_PRESB), digits=4)
+  group_lstats[["PRES.CAL"]] <- format(S$PRES.CAL, digits=2)
+  group_lstats[["POS.CAL"]]  <- format(S$POS.CAL, digits=2)
+  group_lstats[[".CAL"]] <- format(S$OPUE.CAL, digits=2)
 
   return(as.data.table(group_lstats))
 

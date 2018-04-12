@@ -20,7 +20,7 @@ rep_summary <- function(SET, std_method) {
     stop("2 unique gear methods required: ", nmethods, " gear method(s) found.")
   }
 
-  if(!any(std_method %in% unique(SET$METHOD))){
+  if(!any(unique(SET$METHOD) %in% std_method)){
     stop("Invalid method name: '", std_method, "' not found in dataset.")
   }else{
     #Set the other method as secondary.
@@ -32,6 +32,11 @@ rep_summary <- function(SET, std_method) {
     ngroups <- length(unique(SET$GROUP))
     stop("Single GROUP type required: ", ngroups, " GROUP types found.")
   }
+
+  if(sum(SET[SET$METHOD==std_method,]$PRESENCE)==0|sum(SET[SET$METHOD!=std_method,]$PRESENCE)==0){
+      stop("Data only available for 1 method.")
+  }
+
 
   #Sort Input Dataframe by "BLOCK" and (Standard) METHOD. plyr functions auto-sorts their output.
   #SET <- dplyr::arrange_(SET,"BLOCK", "METHOD")
@@ -50,11 +55,11 @@ rep_summary <- function(SET, std_method) {
 
   seengroup_pos <- setblock_2method[setblock_2method$DENSITY >0,]
 
-
-
   #From setblock_2method, calculate the number of REP <------ this is the number of REPs where the GROUP could have
   #been seen, for each METHOD.
   #From seengroup_pos, calculate how many REP have a positive (i.e. not a zero) observation for each METHOD.
+
+
   return(c(GROUP=unique(SET$GROUP),
            NREP_TOTAL=nrow(setblock_2method["REP"]),
            NREP_STD_METHOD=nrow(setblock_2method[setblock_2method["METHOD"] == std_method,]["REP"]),

@@ -56,7 +56,7 @@ get_reef_datalist<- function(SET, std_method){
   lgroup_gcf <- lapply(reeffish_datalist,function(X){
     message("Group: ", unique(X$GROUP))
     tryCatch(
-      gcf(X),
+      gcf(SET=X,Standard=std_method_factorname),
       error=function(cond){
         message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
         return(NA)
@@ -90,8 +90,19 @@ get_reef_datalist<- function(SET, std_method){
   },
   m=std_method_factorname)
 
+#  rep_stats <- rep_summary(reeffish_datalist[[1]],"1_nSPC")
+#  for(i in 2:length(reeffish_datalist)){
+#
+#    aStat <- rep_summary(reeffish_datalist[[i]],"1_nSPC")
 
+#    astat <- data.frame(t(aStat))
+#    rep_stats <- rbind(rep_stats,aStat)
+#  }
 
+#  test <- reeffish_datalist[[3]]
+#  if(sum(SET[SET$METHOD==std_method,]$PRESENCE)==0&sum(SET[SET$METHOD!=std_method,]$PRESENCE)==0){
+#    stop("Data only available for 1 method.")
+# }
 
   #Remove GROUP objects that have null(NA) data
   lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
