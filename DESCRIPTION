@@ -16,5 +16,6 @@ Depends:
     utils,
     plyr,
     dplyr,
-    data.table
+    data.table,
+    boot
 RoxygenNote: 6.0.1

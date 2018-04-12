@@ -4,7 +4,7 @@
 \alias{gcf}
 \title{Gear Calibration Factor summary table}
 \usage{
-gcf(SET, min_obs = 10)
+gcf(SET, min_obs = 10, Standard)
 }
 \arguments{
 \item{SET}{Survey Dataset}

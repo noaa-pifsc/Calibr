@@ -9,6 +9,7 @@
 #' @import data.table
 #' @import stats
 #' @importFrom MASS mvrnorm
+#' @importFrom boot inv.logit
 #'
 #' @export
 gcf <- function (SET, min_obs=10,Standard) {
