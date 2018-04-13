@@ -11,7 +11,7 @@ calibrate_dataset(ORIG, GCFs, Standard)
 
 \item{GCFs}{Gear calibration factors obtained from gcf_glmm function.}
 
-\item{Standard}{Standard gear}
+\item{Standardard}{Standardard gear}
 }
 \description{
 Convert original dataset using the calculated GCFs

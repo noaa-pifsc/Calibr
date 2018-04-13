@@ -12,7 +12,7 @@
 #' @importFrom boot inv.logit
 #'
 #' @export
-gcf <- function (SET, min_obs=10,Standard) {
+gcf_glm <- function (SET, min_obs=10,Standard) {
 
 
   if(class(SET) == "list"){
