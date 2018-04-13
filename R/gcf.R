@@ -99,12 +99,11 @@ gcf <- function (SET, min_obs=10,Standard) {
   group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
 
   group_lstats[["PRES"]] <- format(S$PRES, digits=2)
-  group_lstats[["POS"]]  <- format(S$POS, digits=2)
-  group_lstats[["OPUE"]] <- format(S$OPUE, digits=2)
-
   group_lstats[["PRES.CAL"]] <- format(S$PRES.CAL, digits=2)
+  group_lstats[["POS"]]  <- format(S$POS, digits=2)
   group_lstats[["POS.CAL"]]  <- format(S$POS.CAL, digits=2)
-  group_lstats[[".CAL"]] <- format(S$OPUE.CAL, digits=2)
+  group_lstats[["OPUE"]] <- format(S$OPUE, digits=2)
+  group_lstats[["OPUE.CAL"]] <- format(S$OPUE.CAL, digits=2)
 
   return(as.data.table(group_lstats))
 

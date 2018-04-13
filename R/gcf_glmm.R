@@ -14,7 +14,7 @@
 #' @export
 gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
 
-  ORIG <- data.table(ORIG)
+  ORIG1 <- data.table(ORIG)
 
   # Filter groups with small positive-observation numbers
   ORIG <- data.table(ORIG)
@@ -132,6 +132,11 @@ gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
 
   Final.list <- list(Sum.pres,Sum.pos,Sum.GCF.pres,Sum.GCF.pos,Final.GCF)
   names(Final.list) <- c("M.effect.pres","M.effect.pos","GCF.pres.detail","GCF.pos.detail","GCFs")
+
+  #Convert original dataset to confirm validity of GCFs results
+  conversion  <- calibrate_dataset(ORIG1,Final.list$GCFs,Standard=Standard)
+
+  Final.list[["Summary"]] <- conversion
 
   return(Final.list)
 }

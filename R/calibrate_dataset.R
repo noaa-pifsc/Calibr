@@ -37,7 +37,7 @@ calibrate_dataset <- function (ORIG,GCFs, Standard) {
   S[METHOD!=Standard]$OPUE.CAL <- S[METHOD!=Standard]$PRES.CAL*S[METHOD!=Standard]$POS.CAL
 
   # Re-organize
-  S <- subset(S,select=c(GROUP,METHOD,GCF.SOURCE,PRES.GCF,POS.GCF,PRES,POS,OPUE,PRES.CAL,POS.CAL,OPUE.CAL))
+  S <- subset(S,select=c(GROUP,METHOD,GCF.SOURCE,PRES.GCF,POS.GCF,PRES,PRES.CAL,POS,POS.CAL,OPUE,OPUE.CAL))
   S[,4:ncol(S)] <- round(S[,4:ncol(S)],2)
 
   return(S)
