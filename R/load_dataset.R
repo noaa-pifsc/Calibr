@@ -1,6 +1,6 @@
 
 
-#' Create a survey dataset object from csv file.
+#' Create an input dataset object from csv file.
 #'
 #' Loads a survey dataset from an exising survey dataset \code{*.csv} (comma seperated values) file.
 #' This funcion will throw an error if the input dataset does not have the survey
@@ -12,7 +12,7 @@
 #' @return The function returns a data.frame table, should validation checks are met.
 #'
 #' @export
-load_reef_dataset<- function (file){
+load_dataset<- function (file){
 
   #Read csv file
   #Set 'as.is' param to FALSE to set METHOD and BLOCK as factors. Convert GROUP column in later step.

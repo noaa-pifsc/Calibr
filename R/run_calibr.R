@@ -19,7 +19,10 @@
 #'
 #' @export
 #'
-get_reef_datalist<- function(SET, std_method){
+run_calibr <- function(SET, std_method,model_type){
+
+
+if(model_type=="GLM"){
 
   # Insure that the input dataset is of the format data.table to prevent errors
   SET <- data.frame(SET)
@@ -56,7 +59,7 @@ get_reef_datalist<- function(SET, std_method){
   lgroup_gcf <- lapply(reeffish_datalist,function(X){
     message("Group: ", unique(X$GROUP))
     tryCatch(
-      gcf(SET=X,Standard=std_method_factorname),
+      gcf_glm(SET=X,Standard=std_method_factorname),
       error=function(cond){
         message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
         return(NA)
@@ -90,20 +93,6 @@ get_reef_datalist<- function(SET, std_method){
   },
   m=std_method_factorname)
 
-#  rep_stats <- rep_summary(reeffish_datalist[[1]],"1_nSPC")
-#  for(i in 2:length(reeffish_datalist)){
-#
-#    aStat <- rep_summary(reeffish_datalist[[i]],"1_nSPC")
-
-#    astat <- data.frame(t(aStat))
-#    rep_stats <- rbind(rep_stats,aStat)
-#  }
-
-#  test <- reeffish_datalist[[3]]
-#  if(sum(SET[SET$METHOD==std_method,]$PRESENCE)==0&sum(SET[SET$METHOD!=std_method,]$PRESENCE)==0){
-#    stop("Data only available for 1 method.")
-# }
-
   #Remove GROUP objects that have null(NA) data
   lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
   #Summary descriptive statistics for each GROUP
@@ -122,6 +111,14 @@ get_reef_datalist<- function(SET, std_method){
   message("Number of GROUPS: ", length(reeffish_datalist))
   message("Number of sufficent REPs: ", length(lgroup_calibrated))
   message("")
+}
+
+if(model_type=="GLMM"){
+
+  calibr_results  <- gcf_glmm(SET,n_sample=5,Standard=std_method)
+
+
+}
 
   return(calibr_results)
 }

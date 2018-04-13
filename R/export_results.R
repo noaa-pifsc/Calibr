@@ -1,5 +1,5 @@
 
-#' Export reef data and summaries to data files.
+#' Export results to saved files.
 #'
 #' Option to export grouped survey datasets, the GCF/OPUE Summary Table, and REP summaries in
 #' seperate data files.
@@ -19,7 +19,7 @@
 #' @importFrom utils write.csv
 #'
 #' @export
-export_reef_datalist <- function(datalist,outdir=Sys.getenv("HOME")){
+export_results <- function(datalist,outdir=Sys.getenv("HOME")){
 
   tryCatch(
     {
