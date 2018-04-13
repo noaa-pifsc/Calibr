@@ -1,0 +1,139 @@
+#' Gear Calibration Factor summary table, hierarchical model version
+#'
+#' Sets summary table for the Gear Calibration Factor for all groups analyzed under a single hierarchical, mixed-effect model.
+#'
+#' @param ORIG Original survey dataset
+#' @param min_obs Minimum limit for the number of observations.
+#'
+#' @import data.table
+#' @import parallel
+#' @import plyr
+#' @import glmmTMB
+#' @importFrom boot inv.logit
+#'
+#' @export
+gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
+
+  ORIG <- data.table(ORIG)
+
+  # Filter groups with small positive-observation numbers
+  ORIG <- data.table(ORIG)
+  Species.list <- table(ORIG[DENSITY>0]$GROUP)
+  Species.list <- Species.list[Species.list>=min_obs]
+  Species.list <- names(Species.list)
+  ORIG <- subset(ORIG,GROUP %in% Species.list)
+
+  #======== Data arrangements==============================================================
+  Species.list <- unique(ORIG$GROUP)
+  Species.list <- sort(Species.list)
+  num_species  <- length(Species.list)
+  List.method  <- unique(ORIG$METHOD)
+  Secondary <- List.method[List.method!=Standard]
+
+  ORIG[METHOD==Standard]$METHOD  <- paste0("1_",Standard)
+  ORIG[METHOD==Secondary]$METHOD <- paste0("2_",Secondary)
+
+  ORIG$GROUP  <- as.factor(ORIG$GROUP)
+  ORIG$METHOD <- as.factor(ORIG$METHOD)
+  ORIG$BLOCK  <- as.factor(ORIG$BLOCK)
+
+  contrasts(ORIG$METHOD)<-c(1,-1)
+  contrasts(ORIG$BLOCK)<-"contr.sum"
+  contrasts(ORIG$GROUP)<-"contr.sum"
+
+  #==========Modeling======================================================================
+  Results.pres <- data.frame(matrix(ncol=n_sample,nrow=num_species*2+2))
+  colnames(Results.pres)       <- paste0("V",formatC(1:n_sample,width=2,flag="0"))
+  row.names(Results.pres)[1:2] <- c(paste0("1_",Standard),paste0("2_",Secondary))
+  for(i in 1:num_species){
+    row.names(Results.pres)[i*2+1]   <- paste0(Species.list[i],paste0(":1_",Standard))
+    row.names(Results.pres)[i*2+2]   <- paste0(Species.list[i],paste0(":2_",Secondary))
+  }
+  Results.pos <- data.frame(Results.pres)
+  Effects.list <- row.names(Results.pres)
+
+  # Bootstrap section, function for parallel processing
+  RunBoot <- function(D){
+
+    D <- data.table(D)
+
+    #Presence and positive models
+    lmer.pres <- glmmTMB(PRESENCE~(1|BLOCK/GROUP)+(1|METHOD/GROUP),family=binomial(link="logit"), data=D)
+    lmer.pos  <- glmmTMB(log(DENSITY)~(1|BLOCK/GROUP)+(1|METHOD/GROUP), data=D[DENSITY>0])
+    Effects.pres <- ranef(lmer.pres)$cond
+    Effects.pos  <- ranef(lmer.pos)$cond
+
+    # Store results
+    Species.effect.pres  <- rbind(Effects.pres$METHOD, Effects.pres$`GROUP:METHOD`)
+    Species.effect.pos   <- rbind(Effects.pos$METHOD, Effects.pos$`GROUP:METHOD`)
+
+    return(list(PRES=Species.effect.pres,POS=Species.effect.pos))
+  }
+
+  # Parallel processing section
+  InputList <- list()
+  InputList[[1]] <- ORIG # Base case
+  for(i in 2:n_sample){ InputList[[i]] <- ddply(ORIG,.(GROUP,BLOCK,METHOD),function(x) x[sample(nrow(x),replace=TRUE),] )  }
+
+  no_cores <- detectCores()-1
+  cl <- makeCluster(no_cores)
+  clusterEvalQ(cl,require(data.table)); clusterEvalQ(cl,require(plyr));clusterEvalQ(cl,require(glmmTMB))
+  start<-proc.time()[3]; Out <- parLapply(cl,InputList,RunBoot);print((proc.time()[3]-start)/60);
+  stopCluster(cl)
+
+  for(i in 1:n_sample){
+
+    Results.pres[,i] <- Out[[i]]$PRES[,1][match(rownames(Results.pos), rownames(Out[[i]]$PRES))]
+    Results.pos[,i]  <- Out[[i]]$POS[,1][match(rownames(Results.pos), rownames(Out[[i]]$POS))]
+  }
+
+  # Final result processing section
+  odd_rows   <- seq(1,nrow(Results.pres),2)
+  even_rows  <- seq(2,nrow(Results.pres),2)
+
+  Final.pres <- (Results.pres[odd_rows,1:n_sample]-Results.pres[even_rows,1:n_sample])/2
+  Final.pos  <- (Results.pos[odd_rows,1:n_sample]-Results.pos[even_rows,1:n_sample])/2
+
+  row.names(Final.pres)[1] <- "Global"
+  row.names(Final.pres)[2:(num_species+1)] <- gsub(paste0(":1_",Standard),"",row.names(Final.pres)[2:(num_species+1)])
+  row.names(Final.pos)[1] <- "Global"
+  row.names(Final.pos)[2:(num_species+1)] <- gsub(paste0(":1_",Standard),"",row.names(Final.pos)[2:(num_species+1)])
+
+  # Sum global and species-specific effects
+  for(i in 2:(num_species+1)){
+    Final.pres[i,] <- Final.pres[1,] + Final.pres[i,]
+    Final.pos[i,]  <- Final.pos[1,] + Final.pos[i,]
+  }
+
+  # calculate GCFs
+  GCF.pres <- Final.pres*2
+  GCF.pos  <- exp(-Final.pos)/exp(Final.pos)
+
+  # Calculate mean and sd for all parameters
+  Sum.pres <- data.frame(matrix(ncol=2,nrow=num_species+1))
+  colnames(Sum.pres) <- c("MEAN","SD")
+  row.names(Sum.pres) <- row.names(Final.pres)
+  Sum.pos      <- data.frame(Sum.pres)
+  Sum.GCF.pres <- data.frame(Sum.pres)
+  Sum.GCF.pos  <- data.frame(Sum.pres)
+
+  Sum.pres$MEAN     <- apply(Final.pres[,1:n_sample],1,mean,na.rm=T)
+  Sum.pres$SD       <- apply(Final.pres[,1:n_sample],1,sd,na.rm=T)
+  Sum.pos$MEAN      <- apply(Final.pos[,1:n_sample],1,mean,na.rm=T)
+  Sum.pos$SD        <- apply(Final.pos[,1:n_sample],1,sd,na.rm=T)
+  Sum.GCF.pres$MEAN <- apply(GCF.pres[,1:n_sample],1,mean,na.rm=T)
+  Sum.GCF.pres$SD   <- apply(GCF.pres[,1:n_sample],1,sd,na.rm=T)
+  Sum.GCF.pos$MEAN  <- apply(GCF.pos[,1:n_sample],1,mean,na.rm=T)
+  Sum.GCF.pos$SD    <- apply(GCF.pos[,1:n_sample],1,sd,na.rm=T)
+
+  Final.GCF           <- cbind(Sum.GCF.pres$MEAN,Sum.GCF.pos$MEAN)
+  colnames(Final.GCF) <- c("PRES","POS")
+  rownames(Final.GCF) <- rownames(Sum.GCF.pres)
+
+  Final.list <- list(Sum.pres,Sum.pos,Sum.GCF.pres,Sum.GCF.pos,Final.GCF)
+  names(Final.list) <- c("M.effect.pres","M.effect.pos","GCF.pres.detail","GCF.pos.detail","GCFs")
+
+  return(Final.list)
+}
+
+
