@@ -18,3 +18,20 @@
 #'
 #'@source \url{https://www.pifsc.noaa.gov/library/pubs/admin/PIFSC_Admin_Rep_11-08.pdf}
 "SMALL_UNPAIR"
+
+#'SIMDATA: Simulation data
+#'
+#'Description Of SIMDATA
+#'
+#'@format A data.frame with 4586 rows, and 6 fields:
+#'\describe{
+#'  \item{GROUP}{Species or taxinominal grouping.}
+#'  \item{BLOCK}{Spacetime temporial strata.}
+#'  \item{REP}{Replicate, survey site.}
+#'  \item{METHOD}{Survey method used.}
+#'  \item{DENSITY}{Group abundance of positive observations.}
+#'  \item{PRESENCE}{Proportion of presence over absence of a group at a survey site.}
+#'}
+#'
+#'@source \url{https://www.pifsc.noaa.gov/library/pubs/admin/PIFSC_Admin_Rep_11-08.pdf}
+"SIMDATA"
