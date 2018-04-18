@@ -1,6 +1,6 @@
 Package: Calibr
 Type: Package
-Title: Standardization of Coral Reef Population abundance
+Title: Standardization of population abundance datasets
 Version: 0.0.005
 Author: Eric Fletcher, Marc Nadon
 Maintainer: The package maintainer <yourself@somewhere.net>
