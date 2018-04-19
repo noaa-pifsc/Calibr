@@ -9,6 +9,7 @@
 #'
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
+#' @param model_type Type of Generalized Linear Model used. TODO RENAME FIELD
 #'
 #' @return List object with three items:
 #' \itemize{
