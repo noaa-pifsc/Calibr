@@ -4,7 +4,14 @@
 \alias{rep_summary}
 \title{Site summmary statistics per reef species group}
 \usage{
-rep_summary(SET, std_method)
+rep_summary(SET, std_method, stat_type = c("GLM", "GLMM"))
+}
+\arguments{
+\item{SET}{Dataset}
+
+\item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
+
+\item{stat_type}{Type of Generalized Linear Model used}
 }
 \description{
 Calculates descriptive statistics for each GROUP

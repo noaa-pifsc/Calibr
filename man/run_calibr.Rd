@@ -10,6 +10,8 @@ run_calibr(SET, std_method, model_type)
 \item{SET}{Survey Dataset}
 
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
+
+\item{model_type}{Type of Generalized Linear Model used. TODO RENAME FIELD}
 }
 \value{
 List object with three items:
