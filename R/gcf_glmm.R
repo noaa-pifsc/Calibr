@@ -3,7 +3,9 @@
 #' Sets summary table for the Gear Calibration Factor for all groups analyzed under a single hierarchical, mixed-effect model.
 #'
 #' @param ORIG Original survey dataset
+#' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param min_obs Minimum limit for the number of observations.
+#' @param n_sample Number of Samples
 #'
 #' @import data.table
 #' @import parallel
@@ -12,7 +14,7 @@
 #' @importFrom boot inv.logit
 #'
 #' @export
-gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
+gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
 
   ORIG1 <- data.table(ORIG)
 
@@ -28,10 +30,10 @@ gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
   Species.list <- sort(Species.list)
   num_species  <- length(Species.list)
   List.method  <- unique(ORIG$METHOD)
-  Secondary <- List.method[List.method!=Standard]
+  secondary_method <- List.method[List.method!=std_method]
 
-  ORIG[METHOD==Standard]$METHOD  <- paste0("1_",Standard)
-  ORIG[METHOD==Secondary]$METHOD <- paste0("2_",Secondary)
+  ORIG[METHOD==std_method]$METHOD  <- paste0("1_",std_method)
+  ORIG[METHOD==secondary_method]$METHOD <- paste0("2_",secondary_method)
 
   ORIG$GROUP  <- as.factor(ORIG$GROUP)
   ORIG$METHOD <- as.factor(ORIG$METHOD)
@@ -44,10 +46,10 @@ gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
   #==========Modeling======================================================================
   Results.pres <- data.frame(matrix(ncol=n_sample,nrow=num_species*2+2))
   colnames(Results.pres)       <- paste0("V",formatC(1:n_sample,width=2,flag="0"))
-  row.names(Results.pres)[1:2] <- c(paste0("1_",Standard),paste0("2_",Secondary))
+  row.names(Results.pres)[1:2] <- c(paste0("1_",std_method),paste0("2_",secondary_method))
   for(i in 1:num_species){
-    row.names(Results.pres)[i*2+1]   <- paste0(Species.list[i],paste0(":1_",Standard))
-    row.names(Results.pres)[i*2+2]   <- paste0(Species.list[i],paste0(":2_",Secondary))
+    row.names(Results.pres)[i*2+1]   <- paste0(Species.list[i],paste0(":1_",std_method))
+    row.names(Results.pres)[i*2+2]   <- paste0(Species.list[i],paste0(":2_",secondary_method))
   }
   Results.pos <- data.frame(Results.pres)
   Effects.list <- row.names(Results.pres)
@@ -95,9 +97,9 @@ gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
   Final.pos  <- (Results.pos[odd_rows,1:n_sample]-Results.pos[even_rows,1:n_sample])/2
 
   row.names(Final.pres)[1] <- "Global"
-  row.names(Final.pres)[2:(num_species+1)] <- gsub(paste0(":1_",Standard),"",row.names(Final.pres)[2:(num_species+1)])
+  row.names(Final.pres)[2:(num_species+1)] <- gsub(paste0(":1_",std_method),"",row.names(Final.pres)[2:(num_species+1)])
   row.names(Final.pos)[1] <- "Global"
-  row.names(Final.pos)[2:(num_species+1)] <- gsub(paste0(":1_",Standard),"",row.names(Final.pos)[2:(num_species+1)])
+  row.names(Final.pos)[2:(num_species+1)] <- gsub(paste0(":1_",std_method),"",row.names(Final.pos)[2:(num_species+1)])
 
   # Sum global and species-specific effects
   for(i in 2:(num_species+1)){
@@ -134,7 +136,7 @@ gcf_glmm <- function (ORIG, min_obs=10,n_sample=5,Standard) {
   names(Final.list) <- c("M.effect.pres","M.effect.pos","GCF.pres.detail","GCF.pos.detail","GCFs")
 
   #Convert original dataset to confirm validity of GCFs results
-  conversion  <- calibrate_dataset(ORIG1,Final.list$GCFs,Standard=Standard)
+  conversion  <- calibrate_dataset(ORIG1,Final.list$GCFs,Standard=std_method)
 
   Final.list[["SUMMARY"]] <- conversion
 
