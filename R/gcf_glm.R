@@ -66,6 +66,10 @@ gcf_glm <- function (SET, min_obs=10,Standard) {
   # Convert original dataset using the GCFs to confirm that model worked correctly
   SET <- data.table(SET)
   POS <- data.table(POS)
+
+  SET <- SET[order(METHOD)]
+  POS <- POS[order(METHOD)]
+
   S.pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
   S.pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
   S       <- merge(S.pres,S.pos)
