@@ -7,6 +7,17 @@
 #' @param min_obs Minimum limit for the number of observations.
 #' @param n_sample Number of Samples
 #'
+#' @return List of objects containing the following:
+#'
+#' \describe{
+#'  \item{M.Effect.Pres}{.}
+#'  \item{M.Effect.Pos}{.}
+#'  \item{GCF.Pres.Detail}{.}
+#'  \item{GCF.Pos.Detail}{Data Frame summary of .}
+#'  \item{GCFs}{Input fot Calibrate_dataset funct.}
+#'  \item{SUMMARY}{Original survey dataset with the calibrated GCFs}
+#'}
+#'
 #' @import data.table
 #' @import parallel
 #' @import plyr
