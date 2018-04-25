@@ -13,7 +13,7 @@
 #'
 #' If the user doesn't specify a output directory, then a new directory will be generated from the user's HOME location.
 #'
-#' @param datalist List containing the Grouped dataset and summaries from \code{\link{get_reef_datalist}}
+#' @param datalist List containing the Grouped dataset and summaries from \code{\link{load_dataset}}
 #' @param outdir Location to export data and summaries to. Default location is user's \code{HOME} directory
 #'
 #' @importFrom utils write.csv

@@ -7,7 +7,7 @@
 export_results(datalist, outdir = Sys.getenv("HOME"))
 }
 \arguments{
-\item{datalist}{List containing the Grouped dataset and summaries from \code{\link{get_reef_datalist}}}
+\item{datalist}{List containing the Grouped dataset and summaries from \code{\link{load_dataset}}}
 
 \item{outdir}{Location to export data and summaries to. Default location is user's \code{HOME} directory}
 }
