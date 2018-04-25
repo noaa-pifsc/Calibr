@@ -4,14 +4,14 @@
 \alias{calibrate_dataset}
 \title{Convert original dataset using the calculated GCFs}
 \usage{
-calibrate_dataset(ORIG, GCFs, Standard)
+calibrate_dataset(ORIG, GCFs, std_method)
 }
 \arguments{
 \item{ORIG}{Original Survey Dataset}
 
 \item{GCFs}{Gear calibration factors obtained from gcf_glmm function.}
 
-\item{Standardard}{Standardard gear}
+\item{std_method}{Standard gear METHOD}
 }
 \description{
 Convert original dataset using the calculated GCFs

@@ -4,6 +4,7 @@
 #' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
 #'
 #' @param SET Survey Dataset
+#' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param min_obs Minimum limit for the number of observations.
 #'
 #' @import data.table
@@ -12,7 +13,7 @@
 #' @importFrom boot inv.logit
 #'
 #' @export
-gcf_glm <- function (SET, min_obs=10,Standard) {
+gcf_glm <- function (SET, std_method, min_obs=10) {
 
 
   if(class(SET) == "list"){
@@ -80,9 +81,9 @@ gcf_glm <- function (SET, min_obs=10,Standard) {
   S$OPUE.CAL <- S$OPUE
 
   require(boot)
-  S[METHOD!=Standard]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=Standard]$PRES ))
-  S[METHOD!=Standard]$POS.CAL  <- S[METHOD!=Standard]$POS/GCF.pos
-  S[METHOD!=Standard]$OPUE.CAL <- S[METHOD!=Standard]$PRES.CAL*S[METHOD!=Standard]$POS.CAL
+  S[METHOD!=std_method]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=std_method]$PRES ))
+  S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/GCF.pos
+  S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
 
   S <- cbind(S,t(GCF.pres.quantile))
   colnames(S)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
