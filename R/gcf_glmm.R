@@ -147,7 +147,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   names(Final.list) <- c("M.effect.pres","M.effect.pos","GCF.pres.detail","GCF.pos.detail","GCFs")
 
   #Convert original dataset to confirm validity of GCFs results
-  conversion  <- calibrate_dataset(ORIG1,Final.list$GCFs,Standard=std_method)
+  conversion  <- calibrate_dataset(ORIG1, std_method, Final.list$GCFs)
 
   Final.list[["SUMMARY"]] <- conversion
 

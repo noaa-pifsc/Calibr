@@ -60,7 +60,7 @@ if(model_type=="GLM"){
   lgroup_gcf <- lapply(reeffish_datalist,function(X){
     message("Group: ", unique(X$GROUP))
     tryCatch(
-      gcf_glm(SET=X,Standard=std_method_factorname),
+      gcf_glm(SET=X, std_method=std_method_factorname),
       error=function(cond){
         message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
         return(NA)
@@ -116,7 +116,7 @@ if(model_type=="GLM"){
 
 if(model_type=="GLMM"){
 
-  calibr_results  <- gcf_glmm(SET,n_sample=5,Standard=std_method)
+  calibr_results  <- gcf_glmm(SET, std_method, n_sample=5)
 
 
 }
