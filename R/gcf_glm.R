@@ -80,7 +80,7 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   S$POS.CAL  <- S$POS
   S$OPUE.CAL <- S$OPUE
 
-  require(boot)
+
   S[METHOD!=std_method]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=std_method]$PRES ))
   S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/GCF.pos
   S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
