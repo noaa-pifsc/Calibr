@@ -29,12 +29,13 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
 
   ORIG1 <- data.table(ORIG)
 
+
   # Filter groups with small positive-observation numbers
   ORIG <- data.table(ORIG)
-  Species.list <- table(ORIG[DENSITY>0]$GROUP)
+  Species.list <- table(ORIG[ORIG$DENSITY>0]$GROUP)
   Species.list <- Species.list[Species.list>=min_obs]
   Species.list <- names(Species.list)
-  ORIG <- subset(ORIG,GROUP %in% Species.list)
+  ORIG <- subset(ORIG, ORIG$GROUP %in% Species.list)
 
   #======== Data arrangements==============================================================
   Species.list <- unique(ORIG$GROUP)
@@ -43,8 +44,8 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   List.method  <- unique(ORIG$METHOD)
   secondary_method <- List.method[List.method!=std_method]
 
-  ORIG[METHOD==std_method]$METHOD  <- paste0("1_",std_method)
-  ORIG[METHOD==secondary_method]$METHOD <- paste0("2_",secondary_method)
+  ORIG[getElement(ORIG, "METHOD")==std_method]$METHOD  <- paste0("1_",std_method)
+  ORIG[getElement(ORIG, "METHOD")==secondary_method]$METHOD <- paste0("2_",secondary_method)
 
   ORIG$GROUP  <- as.factor(ORIG$GROUP)
   ORIG$METHOD <- as.factor(ORIG$METHOD)
@@ -72,7 +73,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
 
     #Presence and positive models
     lmer.pres <- glmmTMB(PRESENCE~(1|BLOCK/GROUP)+(1|METHOD/GROUP),family=binomial(link="logit"), data=D)
-    lmer.pos  <- glmmTMB(log(DENSITY)~(1|BLOCK/GROUP)+(1|METHOD/GROUP), data=D[DENSITY>0])
+    lmer.pos  <- glmmTMB(log(DENSITY)~(1|BLOCK/GROUP)+(1|METHOD/GROUP), data=D[D$DENSITY>0])
     Effects.pres <- ranef(lmer.pres)$cond
     Effects.pos  <- ranef(lmer.pos)$cond
 
@@ -86,7 +87,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   # Parallel processing section
   InputList <- list()
   InputList[[1]] <- ORIG # Base case
-  for(i in 2:n_sample){ InputList[[i]] <- ddply(ORIG,.(GROUP,BLOCK,METHOD),function(x) x[sample(nrow(x),replace=TRUE),] )  }
+  for(i in 2:n_sample){ InputList[[i]] <- ddply(ORIG,.("GROUP","BLOCK","METHOD"),function(x) x[sample(nrow(x),replace=TRUE),] )  }
 
   no_cores <- detectCores()-1
   cl <- makeCluster(no_cores)

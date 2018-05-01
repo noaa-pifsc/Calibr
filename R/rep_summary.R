@@ -16,6 +16,9 @@ rep_summary <- function(SET, std_method, stat_type=c("GLM","GLMM")) {
   #validate value for 'stat_type' param
   stat_type <- match.arg(stat_type)
 
+  BLOCK <- SET[["BLOCK"]]
+  METHOD <- SET[["METHOD"]]
+
   if(class(SET) == "list"){
     stop("Parameter SET found as a list object.")
   }
@@ -45,7 +48,7 @@ rep_summary <- function(SET, std_method, stat_type=c("GLM","GLMM")) {
 
   #Sort Input Dataframe by "BLOCK" and (Standard) METHOD. plyr functions auto-sorts their output.
   #SET <- dplyr::arrange_(SET,"BLOCK", "METHOD")
-  SET <- plyr::arrange(SET,BLOCK, METHOD)
+  SET <- plyr::arrange(SET, BLOCK, METHOD)
 
   #Make a vector of all BLOCKs where the GROUP was seen at least once by both METHODs.
   #require(plyr)
