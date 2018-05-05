@@ -1,3 +1,17 @@
+#Bindings for "global variables" used in calibrate_dataset
+if(getRversion() >= "2.15.1")  {
+  utils::globalVariables(c("GCF.SOURCE",
+                           "GROUP",
+                           "OPUE",
+                           "OPUE.CAL",
+                           "POS",
+                           "POS.CAL",
+                           "POS.GCF",
+                           "PRES",
+                           "PRES.CAL",
+                           "PRES.GCF"))
+}
+
 #' Convert original dataset using the calculated GCFs
 #'
 #' @param ORIG Original Survey Dataset
