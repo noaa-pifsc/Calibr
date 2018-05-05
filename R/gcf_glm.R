@@ -1,3 +1,7 @@
+#Bindings for "global variables"
+if(getRversion() >= "2.15.1")  {
+   utils::globalVariables(c("METHOD", "PRESENCE", "DENSITY"))
+}
 
 #' Gear Calibration Factor summary table
 #'
@@ -68,11 +72,11 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   SET <- data.table(SET)
   POS <- data.table(POS)
 
-  SET <- SET[order(SET$METHOD)]
-  POS <- POS[order(POS$METHOD)]
+  SET <- SET[order(METHOD)]
+  POS <- POS[order(METHOD)]
 
-  S.pres  <- SET[,list(PRES=mean(SET$PRESENCE)),by=list(SET$METHOD)]
-  S.pos   <- POS[,list(POS=mean(POS$DENSITY)),by=list(POS$METHOD)]
+  S.pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
+  S.pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
   S       <- merge(S.pres,S.pos)
   S$OPUE  <- S$PRES*S$POS
 
@@ -81,9 +85,9 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   S$OPUE.CAL <- S$OPUE
 
 
-  S[S$METHOD!=std_method]$PRES.CAL <- inv.logit(GCF.pres+logit(S[S$METHOD!=std_method]$PRES ))
-  S[S$METHOD!=std_method]$POS.CAL  <- S[S$METHOD!=std_method]$POS/GCF.pos
-  S[S$METHOD!=std_method]$OPUE.CAL <- S[S$METHOD!=std_method]$PRES.CAL*S[S$METHOD!=std_method]$POS.CAL
+  S[METHOD!=std_method]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=std_method]$PRES ))
+  S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/GCF.pos
+  S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
 
   S <- cbind(S,t(GCF.pres.quantile))
   colnames(S)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
