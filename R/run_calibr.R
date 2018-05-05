@@ -9,7 +9,7 @@
 #'
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
-#' @param model_type Type of Generalized Linear Model used. TODO RENAME FIELD
+#' @param stat_model Type of Generalized Linear Model used.
 #'
 #' @return List object with three items:
 #' \itemize{
@@ -20,10 +20,12 @@
 #'
 #' @export
 #'
-run_calibr <- function(SET, std_method,model_type){
+run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM")){
+
+  stat_model <- match.arg(stat_model)
 
 
-if(model_type=="GLM"){
+if(stat_model=="GLM"){
 
   # Insure that the input dataset is of the format data.table to prevent errors
   SET <- data.frame(SET)
@@ -114,7 +116,7 @@ if(model_type=="GLM"){
   message("")
 }
 
-if(model_type=="GLMM"){
+if(stat_model=="GLMM"){
 
   calibr_results  <- gcf_glmm(SET, std_method, n_sample=5)
 

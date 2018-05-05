@@ -4,14 +4,14 @@
 \alias{run_calibr}
 \title{Survey dataset by species group and summaries}
 \usage{
-run_calibr(SET, std_method, model_type)
+run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"))
 }
 \arguments{
 \item{SET}{Survey Dataset}
 
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 
-\item{model_type}{Type of Generalized Linear Model used. TODO RENAME FIELD}
+\item{stat_model}{Type of Generalized Linear Model used.}
 }
 \value{
 List object with three items:
