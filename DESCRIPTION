@@ -1,7 +1,7 @@
 Package: Calibr
 Type: Package
 Title: Standardization of population abundance datasets
-Version: 0.0.7
+Version: 0.0.8
 Author: Eric Fletcher, Marc Nadon
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
@@ -11,6 +11,7 @@ Encoding: UTF-8
 LazyData: true
 Depends:
     R (>= 3.0.0),
+Imports:
     MASS,
     methods,
     utils,
