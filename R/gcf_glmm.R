@@ -24,9 +24,9 @@ if(getRversion() >= "2.15.1")  {
 #'}
 #'
 #' @import data.table
-#' @import parallel
-#' @import plyr
-#' @import glmmTMB
+#' @importFrom plyr ddply .
+#' @importFrom parallel clusterEvalQ makeCluster stopCluster parLapply detectCores
+#' @importFrom glmmTMB glmmTMB ranef
 #' @importFrom boot inv.logit
 #'
 #' @export
