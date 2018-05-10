@@ -38,12 +38,12 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
 
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
-  contrasts(SET$METHOD) <- c(1,-1)
+  contrasts(SET$METHOD) <- c(0,1)
   contrasts(SET$BLOCK)  <- "contr.sum"
 
   POS$METHOD <- as.factor(POS$METHOD)
   POS$BLOCK  <- as.factor(POS$BLOCK)
-  contrasts(POS$METHOD) <- c(1,-1)
+  contrasts(POS$METHOD) <- c(0,1)
   contrasts(POS$BLOCK)  <- "contr.sum"
 
 
@@ -56,16 +56,16 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
   mu.pres.method    <- glm.pres$coefficients[2]
   SD.pres.method    <- summary(glm.pres)$coefficients[2,2]
-  GCF.pres          <- mu.pres.method+mu.pres.method
+  GCF.pres          <- mu.pres.method
   pres.method       <- rnorm(n=1000,mean=mu.pres.method,sd=SD.pres.method)
-  GCF.pres.dist     <- (pres.method+pres.method) # Additive method effect in logit space
+  GCF.pres.dist     <- pres.method # Additive method effect in logit space
   GCF.pres.quantile <- format(quantile(GCF.pres.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
   mu.pos.method     <- glm.pos$coefficients[2]
   SD.pos.method     <- summary(glm.pos)$coefficients[2,2]
-  GCF.pos           <- exp(-mu.pos.method)/exp(mu.pos.method)
+  GCF.pos           <- exp(mu.pos.method)
   pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
-  GCF.pos.dist           <- exp(-pos.method)/exp(pos.method)
+  GCF.pos.dist      <- exp(pos.method)
   GCF.pos.quantile  <- format(quantile(GCF.pos.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
   # Convert original dataset using the GCFs to confirm that model worked correctly
@@ -85,7 +85,7 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   S$OPUE.CAL <- S$OPUE
 
 
-  S[METHOD!=std_method]$PRES.CAL <- inv.logit(GCF.pres+logit(S[METHOD!=std_method]$PRES ))
+  S[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(S[METHOD!=std_method]$PRES)-GCF.pres )
   S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/GCF.pos
   S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
 
