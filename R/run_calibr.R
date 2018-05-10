@@ -83,7 +83,7 @@ if(stat_model=="GLM"){
     tryCatch(
       {
         vec_stats <- rep_summary(X,m)
-        X <- data.frame(t(vec_stats))
+        X <- data.frame(as.list(vec_stats))
       },
       error=function(cond){
         message("With ", unique(X$GROUP) , ": ", trimws(cond), " Returning NA")
@@ -94,7 +94,7 @@ if(stat_model=="GLM"){
       }
     )
   },
-  m=std_method_factorname)
+  m=std_method_factorname, simplify = FALSE)
 
   #Remove GROUP objects that have null(NA) data
   lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
