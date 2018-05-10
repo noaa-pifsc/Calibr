@@ -22,7 +22,7 @@ if(getRversion() >= "2.15.1")  {
 #' @importFrom boot inv.logit
 #'
 #' @export
-calibrate_dataset <- function (ORIG, GCFs, std_method) {
+calibrate_dataset <- function (ORIG,std_method, GCFs) {
 
   D <- data.table(ORIG)
   GCFs <- data.table(GCFs,keep.rownames=T)
@@ -46,7 +46,7 @@ calibrate_dataset <- function (ORIG, GCFs, std_method) {
   S[is.na(PRES.GCF)]$PRES.GCF <- GCFs[1,]$PRES.GCF
   S[is.na(POS.GCF)]$POS.GCF <- GCFs[1,]$POS.GCF
 
-  S[METHOD!=std_method]$PRES.CAL <- inv.logit(S[METHOD!=std_method]$PRES.GCF+logit(S[METHOD!=std_method]$PRES ))
+  S[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(S[METHOD!=std_method]$PRES )-S[METHOD!=std_method]$PRES.GCF)
   S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/S[METHOD!=std_method]$POS.GCF
   S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
 

@@ -56,7 +56,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   ORIG$METHOD <- as.factor(ORIG$METHOD)
   ORIG$BLOCK  <- as.factor(ORIG$BLOCK)
 
-  contrasts(ORIG$METHOD)<-c(1,-1)
+  contrasts(ORIG$METHOD)<-c(0,1)
   contrasts(ORIG$BLOCK)<-"contr.sum"
   contrasts(ORIG$GROUP)<-"contr.sum"
 
@@ -125,8 +125,8 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   }
 
   # calculate GCFs
-  GCF.pres <- Final.pres*2
-  GCF.pos  <- exp(-Final.pos)/exp(Final.pos)
+  GCF.pres <- -Final.pres
+  GCF.pos  <- exp(-Final.pos)
 
   # Calculate mean and sd for all parameters
   Sum.pres <- data.frame(matrix(ncol=2,nrow=num_species+1))
