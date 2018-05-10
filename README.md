@@ -1,6 +1,6 @@
-# Calibur
+# Calibr
 
-Calibur is a R-Package designed to process highly diverse coral reef species datasets and to analyse with _Generalized Linear Models_ (GLM) to obtian standarization factors.
+Calibr is a R-Package designed to process highly diverse species datasets and the ablity to analyse them with statistical models, such as the _Generalized Linear Model_ (GLM) and the _Generalized Linear Mixed Model_ (GLMM), to obtian standarization factors.
 
 ## Github Disclaimer
 
