@@ -96,22 +96,24 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
 
   # Populate output list
   group_lstats <- list()
-  group_lstats[["GROUP"]] <- unique(SET$GROUP)
+  group_lstats[["GROUP"]]  <- unique(SET$GROUP)
   group_lstats[["METHOD"]] <- unique(SET$METHOD)
 
-  group_lstats[["GCF.PRES"]]     <- unname(format(GCF.pres.quantile["50%"], digits=2))
+  #group_lstats[["GCF.PRES"]]    <- unname(format(GCF.pres.quantile["50%"], digits=2))
+  group_lstats[["GCF.PRES"]]     <- unname(format(GCF.pres,digits=2)) # Base case instead of mean
   group_lstats[["GCF.PRES_2.5"]] <- unname(format(GCF.pres.quantile["2.5%"], digits=2))
   group_lstats[["GCF.PRES_95"]]  <- unname(format(GCF.pres.quantile["97.5%"], digits=2))
 
-  group_lstats[["GCF.POS"]]     <- unname(format(GCF.pos.quantile["50%"], digits=2))
+  #group_lstats[["GCF.POS"]]    <- unname(format(GCF.pos.quantile["50%"], digits=2))
+  group_lstats[["GCF.POS"]]     <- unname(format(GCF.pos,digits=2)) # Base case instead of mean
   group_lstats[["GCF.POS_2.5"]] <- unname(format(GCF.pos.quantile["2.5%"], digits=2))
   group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
 
-  group_lstats[["PRES"]] <- format(S$PRES, digits=2)
+  group_lstats[["PRES"]]     <- format(S$PRES, digits=2)
   group_lstats[["PRES.CAL"]] <- format(S$PRES.CAL, digits=2)
-  group_lstats[["POS"]]  <- format(S$POS, digits=2)
+  group_lstats[["POS"]]      <- format(S$POS, digits=2)
   group_lstats[["POS.CAL"]]  <- format(S$POS.CAL, digits=2)
-  group_lstats[["OPUE"]] <- format(S$OPUE, digits=2)
+  group_lstats[["OPUE"]]     <- format(S$OPUE, digits=2)
   group_lstats[["OPUE.CAL"]] <- format(S$OPUE.CAL, digits=2)
 
   return(as.data.table(group_lstats))
