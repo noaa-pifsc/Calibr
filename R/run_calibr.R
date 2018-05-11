@@ -51,15 +51,17 @@ if(stat_model=="GLM"){
   std_method_factorname <- paste0("1_",std_method)
 
   message("Spliting dataset by GROUP value ... ")
-  #Split the reef dataset into a list of smaller sets by GROUP value.
-  reeffish_datalist <- split(SET, SET$GROUP)
+  #Split the dataset into a list of smaller sets by GROUP value.
+  fish_datalist <- split(SET, SET$GROUP)
+
+
 
   message( "===============================================================================\n",
            "Calculating the proportion of total number of REP w/ positive observations ... \n",
            "===============================================================================")
 
   #Lapply gcf function for all reef species
-  lgroup_gcf <- lapply(reeffish_datalist,function(X){
+  lgroup_gcf <- lapply(fish_datalist,function(X){
     message("Group: ", unique(X$GROUP))
     tryCatch(
       gcf_glm(SET=X, std_method=std_method_factorname),
@@ -79,7 +81,7 @@ if(stat_model=="GLM"){
           "===========================================")
 
   #REP stats by GROUP
-  rep_stats <- sapply(reeffish_datalist,function(X,m){
+  rep_stats <- sapply(fish_datalist,function(X,m){
     tryCatch(
       {
         vec_stats <- rep_summary(X,m)
@@ -96,6 +98,7 @@ if(stat_model=="GLM"){
   },
   m=std_method_factorname, simplify = FALSE)
 
+
   #Remove GROUP objects that have null(NA) data
   lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
   #Summary descriptive statistics for each GROUP
@@ -107,11 +110,11 @@ if(stat_model=="GLM"){
 
   message("Returning Grouped Data and Summaries in a list ...")
   #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=reeffish_datalist,SUMMARY=lgroup_summary,REP_SUMMARY=rep_stats_table)
+  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=lgroup_summary,REP_SUMMARY=rep_stats_table)
   message("Done.")
 
   message("\n---")
-  message("Number of GROUPS: ", length(reeffish_datalist))
+  message("Number of GROUPS: ", length(fish_datalist))
   message("Number of sufficent REPs: ", length(lgroup_calibrated))
   message("")
 }
