@@ -56,9 +56,10 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   ORIG$METHOD <- as.factor(ORIG$METHOD)
   ORIG$BLOCK  <- as.factor(ORIG$BLOCK)
 
-  contrasts(ORIG$METHOD)<-c(0,1)
-  contrasts(ORIG$BLOCK)<-"contr.sum"
-  contrasts(ORIG$GROUP)<-"contr.sum"
+  # glmmTMB appears to set it's own contrasts? The Methods contrasts default to -1,1 (can't change to 0,1)
+  #contrasts(ORIG$METHOD)<-c(-1,1)
+  #contrasts(ORIG$BLOCK)<-"contr.sum"
+  #contrasts(ORIG$GROUP)<-"contr.sum"
 
   #==========Modeling======================================================================
   Results.pres <- data.frame(matrix(ncol=n_sample,nrow=num_species*2+2))
@@ -125,8 +126,8 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   }
 
   # calculate GCFs
-  GCF.pres <- -Final.pres
-  GCF.pos  <- exp(-Final.pos)
+  GCF.pres <- 2*Final.pres
+  GCF.pos  <- exp(-Final.pos)/exp(Final.pos)
 
   # Calculate mean and sd for all parameters
   Sum.pres <- data.frame(matrix(ncol=2,nrow=num_species+1))
