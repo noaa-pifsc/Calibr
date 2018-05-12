@@ -10,6 +10,7 @@
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param stat_model Type of Generalized Linear Model used.
+#' @param n_sample Number of Samples
 #'
 #' @return List object with three items:
 #' \itemize{
@@ -20,7 +21,7 @@
 #'
 #' @export
 #'
-run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM")){
+run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   stat_model <- match.arg(stat_model)
 

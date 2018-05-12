@@ -4,7 +4,7 @@
 \alias{run_calibr}
 \title{Survey dataset by species group and summaries}
 \usage{
-run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"))
+run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"), n_sample = 5)
 }
 \arguments{
 \item{SET}{Survey Dataset}
@@ -12,6 +12,8 @@ run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"))
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 
 \item{stat_model}{Type of Generalized Linear Model used.}
+
+\item{n_sample}{Number of Samples}
 }
 \value{
 List object with three items:
