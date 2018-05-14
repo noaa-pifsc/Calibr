@@ -26,7 +26,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
   stat_model <- match.arg(stat_model)
 
 
-if(stat_model=="GLM"){
+
 
   # Insure that the input dataset is of the format data.table to prevent errors
   SET <- data.frame(SET)
@@ -55,28 +55,42 @@ if(stat_model=="GLM"){
   #Split the dataset into a list of smaller sets by GROUP value.
   fish_datalist <- split(SET, SET$GROUP)
 
+  message( "====================================================================\n",
+           "Applying ", stat_model, " Gear Calibration Factor to dataset ... \n",
+           "====================================================================")
 
+  if(stat_model=="GLM"){
 
-  message( "===============================================================================\n",
-           "Calculating the proportion of total number of REP w/ positive observations ... \n",
-           "===============================================================================")
+    #Lapply gcf function for all species
+    lgroup_gcf <- lapply(fish_datalist,function(X){
+      message("Group: ", unique(X$GROUP))
+      tryCatch(
+        if(stat_model=="GLM"){
+          gcf_glm(SET=X, std_method=std_method_factorname)
+        }
+        ,#End of code expresssion
+        error=function(cond){
+          message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
+          return(NA)
+        },
+        warning=function(cond){
+          message(unique(X$GROUP) , ": " , trimws(cond))
+        }
+      )
 
-  #Lapply gcf function for all reef species
-  lgroup_gcf <- lapply(fish_datalist,function(X){
-    message("Group: ", unique(X$GROUP))
-    tryCatch(
-      gcf_glm(SET=X, std_method=std_method_factorname),
-      error=function(cond){
-        message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
-        return(NA)
-      },
-      warning=function(cond){
-        message(unique(X$GROUP) , ": " , trimws(cond))
-      }
-    )
+    })
 
-  })
+    #Remove GROUP objects that have null(NA) data
+    lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
+    #Summary descriptive statistics for each GROUP
+    gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
+    n_sufficentREPS <- nrow(lgroup_calibrated)
 
+  }else if(stat_model=="GLMM"){
+
+    gcf_summary <- gcf_glmm(ORIG=SET, std_method=std_method_factorname, n_sample=n_sample)
+    n_sufficentREPS <- nrow(gcf_summary$SUMMARY[!is.na(gcf_summary$SUMMARY)])
+  }
   message("===========================================\n",
           "Calculating number of REP per Group  ...   \n",
           "===========================================")
@@ -100,10 +114,7 @@ if(stat_model=="GLM"){
   m=std_method_factorname, simplify = FALSE)
 
 
-  #Remove GROUP objects that have null(NA) data
-  lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
-  #Summary descriptive statistics for each GROUP
-  lgroup_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
+
 
   #REP Summary statistics table for each GROUP
   rep_stats_table <- suppressMessages(
@@ -111,21 +122,15 @@ if(stat_model=="GLM"){
 
   message("Returning Grouped Data and Summaries in a list ...")
   #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=lgroup_summary,REP_SUMMARY=rep_stats_table)
+  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=gcf_summary,REP_SUMMARY=rep_stats_table)
   message("Done.")
 
   message("\n---")
   message("Number of GROUPS: ", length(fish_datalist))
-  message("Number of sufficent REPs: ", length(lgroup_calibrated))
+  message("Number of sufficent REPs: ", length(n_sufficentREPS))
   message("")
-}
-
-if(stat_model=="GLMM"){
-
-  calibr_results  <- gcf_glmm(SET, std_method, n_sample=5)
 
 
-}
 
   return(calibr_results)
 }
