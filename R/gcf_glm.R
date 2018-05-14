@@ -75,24 +75,24 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   SET <- SET[order(METHOD)]
   POS <- POS[order(METHOD)]
 
-  S.pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
-  S.pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
-  S       <- merge(S.pres,S.pos)
-  S$OPUE  <- S$PRES*S$POS
+  site_pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
+  site_pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
+  site_dt       <- merge(site_pres,site_pos)
+  site_dt$OPUE  <- site_dt$PRES*site_dt$POS
 
-  S$PRES.CAL <- S$PRES
-  S$POS.CAL  <- S$POS
-  S$OPUE.CAL <- S$OPUE
+  site_dt$PRES.CAL <- site_dt$PRES
+  site_dt$POS.CAL  <- site_dt$POS
+  site_dt$OPUE.CAL <- site_dt$OPUE
 
 
-  S[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(S[METHOD!=std_method]$PRES)-GCF.pres )
-  S[METHOD!=std_method]$POS.CAL  <- S[METHOD!=std_method]$POS/GCF.pos
-  S[METHOD!=std_method]$OPUE.CAL <- S[METHOD!=std_method]$PRES.CAL*S[METHOD!=std_method]$POS.CAL
+  site_dt[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(site_dt[METHOD!=std_method]$PRES)-GCF.pres )
+  site_dt[METHOD!=std_method]$POS.CAL  <- site_dt[METHOD!=std_method]$POS/GCF.pos
+  site_dt[METHOD!=std_method]$OPUE.CAL <- site_dt[METHOD!=std_method]$PRES.CAL*site_dt[METHOD!=std_method]$POS.CAL
 
-  S <- cbind(S,t(GCF.pres.quantile))
-  colnames(S)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
-  S <- cbind(S,t(GCF.pos.quantile))
-  colnames(S)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
+  site_dt <- cbind(site_dt,t(GCF.pres.quantile))
+  colnames(site_dt)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
+  site_dt <- cbind(site_dt,t(GCF.pos.quantile))
+  colnames(site_dt)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
 
   # Populate output list
   group_lstats <- list()
@@ -109,12 +109,12 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   group_lstats[["GCF.POS_2.5"]] <- unname(format(GCF.pos.quantile["2.5%"], digits=2))
   group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
 
-  group_lstats[["PRES"]]     <- format(S$PRES, digits=2)
-  group_lstats[["PRES.CAL"]] <- format(S$PRES.CAL, digits=2)
-  group_lstats[["POS"]]      <- format(S$POS, digits=2)
-  group_lstats[["POS.CAL"]]  <- format(S$POS.CAL, digits=2)
-  group_lstats[["OPUE"]]     <- format(S$OPUE, digits=2)
-  group_lstats[["OPUE.CAL"]] <- format(S$OPUE.CAL, digits=2)
+  group_lstats[["PRES"]]     <- format(site_dt$PRES, digits=2)
+  group_lstats[["PRES.CAL"]] <- format(site_dt$PRES.CAL, digits=2)
+  group_lstats[["POS"]]      <- format(site_dt$POS, digits=2)
+  group_lstats[["POS.CAL"]]  <- format(site_dt$POS.CAL, digits=2)
+  group_lstats[["OPUE"]]     <- format(site_dt$OPUE, digits=2)
+  group_lstats[["OPUE.CAL"]] <- format(site_dt$OPUE.CAL, digits=2)
 
   return(as.data.table(group_lstats))
 
