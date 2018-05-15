@@ -88,8 +88,9 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   }else if(stat_model=="GLMM"){
 
-    gcf_summary <- gcf_glmm(ORIG=SET, std_method=std_method_factorname, n_sample=n_sample)
-    n_sufficentREPS <- nrow(gcf_summary$SUMMARY)
+    gcf_results <- gcf_glmm(ORIG=SET, std_method=std_method_factorname, n_sample=n_sample)
+    n_sufficentREPS <- nrow(gcf_results$SUMMARY)
+    gcf_summary <- gcf_results$SUMMARY
   }
   message("===========================================\n",
           "Calculating number of REP per Group  ...   \n",
@@ -122,7 +123,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   message("Returning Grouped Data and Summaries in a list ...")
   #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=gcf_summary$SUMMARY,REP_SUMMARY=rep_stats_table)
+  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=gcf_summary,REP_SUMMARY=rep_stats_table)
   message("Done.")
 
   message("\n---")

@@ -75,8 +75,12 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   SET <- SET[order(METHOD)]
   POS <- POS[order(METHOD)]
 
-  site_pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD)]
-  site_pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD)]
+  site_pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD,BLOCK)]
+  site_pres  <- site_pres[,list(PRES=mean(PRES)),by=list(METHOD)]
+
+  site_pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD,BLOCK)]
+  site_pos   <- site_pos[,list(POS=mean(POS)),by=list(METHOD)]
+
   site_dt       <- merge(site_pres,site_pos)
   site_dt$OPUE  <- site_dt$PRES*site_dt$POS
 
