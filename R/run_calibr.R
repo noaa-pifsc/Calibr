@@ -89,7 +89,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
   }else if(stat_model=="GLMM"){
 
     gcf_summary <- gcf_glmm(ORIG=SET, std_method=std_method_factorname, n_sample=n_sample)
-    n_sufficentREPS <- nrow(gcf_summary$SUMMARY[!is.na(gcf_summary$SUMMARY)])
+    n_sufficentREPS <- nrow(gcf_summary$SUMMARY)
   }
   message("===========================================\n",
           "Calculating number of REP per Group  ...   \n",
