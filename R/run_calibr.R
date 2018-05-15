@@ -122,7 +122,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   message("Returning Grouped Data and Summaries in a list ...")
   #Return grouped datalist and summary table in a list
-  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=gcf_summary,REP_SUMMARY=rep_stats_table)
+  calibr_results <- list(LGROUP=fish_datalist,SUMMARY=gcf_summary$SUMMARY,REP_SUMMARY=rep_stats_table)
   message("Done.")
 
   message("\n---")
