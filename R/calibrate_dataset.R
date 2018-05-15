@@ -28,8 +28,12 @@ calibrate_dataset <- function (ORIG,std_method, GCFs) {
   GCFs <- data.table(GCFs,keep.rownames=T)
   colnames(GCFs) <- c("GROUP","PRES.GCF","POS.GCF")
 
-  S.pres  <- D[,list(PRES=mean(PRESENCE)),by=list(GROUP,METHOD)]
-  S.pos   <- D[PRESENCE>0,list(POS=mean(DENSITY)),by=list(GROUP,METHOD)]
+  S.pres  <- D[,list(PRES=mean(PRESENCE)),by=list(GROUP,METHOD,BLOCK)]
+  S.pres  <- S.pres[,list(PRES=mean(PRES)),by=list(GROUP,METHOD)]
+
+  S.pos   <- D[PRESENCE>0,list(POS=mean(DENSITY)),by=list(GROUP,METHOD,BLOCK)]
+  S.pos   <- S.pos[,list(POS=mean(POS)),by=list(GROUP,METHOD)]
+
   S       <- merge(S.pres,S.pos)
   S$OPUE  <- S$PRES*S$POS
 
