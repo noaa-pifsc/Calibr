@@ -93,13 +93,23 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   # Parallel processing section
   InputList <- list()
   InputList[[1]] <- ORIG # Base case
-  for(i in 2:n_sample){ InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),] )  }
+  for(i in 2:n_sample){
+    InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),] )
+  }
 
   no_cores <- detectCores()-1
   cl <- makeCluster(no_cores)
-  clusterEvalQ(cl,require(data.table)); clusterEvalQ(cl,require(plyr));clusterEvalQ(cl,require(glmmTMB))
-  start<-proc.time()[3]; Out <- parLapply(cl,InputList,RunBoot);print((proc.time()[3]-start)/60);
+  clusterEvalQ(cl,require(data.table))
+  clusterEvalQ(cl,require(plyr))
+  clusterEvalQ(cl,require(glmmTMB))
+
+  start<-proc.time()[3]
+  Out <- parLapply(cl,InputList,RunBoot)
+  print((proc.time()[3]-start)/60)
+
   stopCluster(cl)
+
+  #END Parallel Processing Section
 
   for(i in 1:n_sample){
 
