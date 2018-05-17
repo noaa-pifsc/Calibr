@@ -96,12 +96,12 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
 
   InputList <- list()
   InputList[[1]] <- ORIG # Base case
-  message("Setup base case ...")
+  message("Setting up base case ...")
   for(i in 2:n_sample){
     InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),])
   }
 
-  message("Setup parallel processing clusters ...")
+  message("Setting up parallel processing clusters ...")
   no_cores <- detectCores()-1
   cl <- makeCluster(no_cores)
 
@@ -111,7 +111,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   Out <- pblapply(InputList,RunBoot,cl=cl)
   print((proc.time()[3]-start)/60)
 
-  message("Done")
+  message("Done.")
   stopCluster(cl)
 
   #END Parallel Processing Section
