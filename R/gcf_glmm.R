@@ -104,10 +104,6 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   message("Setup parallel processing clusters ...")
   no_cores <- detectCores()-1
   cl <- makeCluster(no_cores)
-  clusterEvalQ(cl,require(data.table))
-  clusterEvalQ(cl,require(plyr))
-  clusterEvalQ(cl,require(glmmTMB))
-
 
   message("Applying species effects to presence and positive models ...")
   start<-proc.time()[3]
