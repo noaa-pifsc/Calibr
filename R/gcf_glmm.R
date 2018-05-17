@@ -24,6 +24,7 @@ if(getRversion() >= "2.15.1")  {
 #'}
 #'
 #' @import data.table
+#' @importFrom pbapply pblapply pboptions
 #' @importFrom plyr ddply .
 #' @importFrom parallel clusterEvalQ makeCluster stopCluster parLapply detectCores
 #' @importFrom glmmTMB glmmTMB ranef
@@ -91,10 +92,12 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   }
 
   # Parallel processing section
+  pboptions(type= "txt")
+
   InputList <- list()
   InputList[[1]] <- ORIG # Base case
   for(i in 2:n_sample){
-    InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),] )
+    InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),])
   }
 
   no_cores <- detectCores()-1
@@ -104,7 +107,8 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   clusterEvalQ(cl,require(glmmTMB))
 
   start<-proc.time()[3]
-  Out <- parLapply(cl,InputList,RunBoot)
+  #Out <- parLapply(cl,InputList,RunBoot)
+  Out <- pblapply(InputList,RunBoot,cl=cl)
   print((proc.time()[3]-start)/60)
 
   stopCluster(cl)
@@ -172,6 +176,10 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   conversion  <- data.frame(conversion)
 
   Final.list[["SUMMARY"]] <- conversion
+
+  #Supress progressbar onexit
+  pbo <- pboptions(type = "none")
+  on.exit(pboptions(pbo), add = TRUE)
 
   return(Final.list)
 }
