@@ -109,7 +109,7 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   #start <- proc.time()
   #Out <- parLapply(cl,InputList,RunBoot)
   out_time <- system.time( Out <- pblapply(InputList,RunBoot,cl=cl) )
-  message("Parallel processing times:")
+  message("Parallel processing times (in seconds):")
   print(out_time)
   message("Elapsed (per minute): ~", format(round(out_time[3]/60,4), nsmall=2), " min(s)")
 
