@@ -106,10 +106,12 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   cl <- makeCluster(no_cores)
 
   message("Applying species effects to presence and positive models ...")
-  start<-proc.time()[3]
+  #start <- proc.time()
   #Out <- parLapply(cl,InputList,RunBoot)
-  Out <- pblapply(InputList,RunBoot,cl=cl)
-  print((proc.time()[3]-start)/60)
+  out_time <- system.time( Out <- pblapply(InputList,RunBoot,cl=cl) )
+  message("Parallel processing times:")
+  print(out_time)
+  message("Elapsed (per minute): ~", format(round(out_time[3]/60,4), nsmall=2), " min(s)")
 
   message("Done.")
   stopCluster(cl)
