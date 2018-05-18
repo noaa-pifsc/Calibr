@@ -4,7 +4,7 @@
 \alias{gcf_glm}
 \title{Gear Calibration Factor summary table}
 \usage{
-gcf_glm(SET, std_method, min_obs = 10)
+gcf_glm(SET, std_method, min_obs = 10, do_parallel = FALSE)
 }
 \arguments{
 \item{SET}{Survey Dataset}
@@ -12,6 +12,8 @@ gcf_glm(SET, std_method, min_obs = 10)
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 
 \item{min_obs}{Minimum limit for the number of observations.}
+
+\item{do_parallel}{Option for parallelization. Currently unimplmented.}
 }
 \description{
 Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.

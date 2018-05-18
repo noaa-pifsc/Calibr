@@ -10,6 +10,7 @@ if(getRversion() >= "2.15.1")  {
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param min_obs Minimum limit for the number of observations.
+#' @param do_parallel Option for parallelization. Currently unimplmented.
 #'
 #' @import data.table
 #' @import stats
@@ -17,7 +18,7 @@ if(getRversion() >= "2.15.1")  {
 #' @importFrom boot inv.logit logit
 #'
 #' @export
-gcf_glm <- function (SET, std_method, min_obs=10) {
+gcf_glm <- function (SET, std_method, min_obs=10, do_parallel=FALSE) {
 
 
   if(class(SET) == "list"){
@@ -47,11 +48,14 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   contrasts(POS$BLOCK)  <- "contr.sum"
 
 
-  #positive-only (Eq. 3, Nadon, et al.)
-  glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
-  #presnce/absence (Eq. 4, Nadon et al. )
-  glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
-
+  if(do_parallel){
+    stop("Stub. gcf_glm parallelization not Implemented.")
+  }else{
+    #positive-only (Eq. 3, Nadon, et al.)
+    glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
+    #presnce/absence (Eq. 4, Nadon et al. )
+    glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
+  }
 
   # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
   mu.pres.method    <- glm.pres$coefficients[2]
@@ -88,15 +92,19 @@ gcf_glm <- function (SET, std_method, min_obs=10) {
   site_dt$POS.CAL  <- site_dt$POS
   site_dt$OPUE.CAL <- site_dt$OPUE
 
+  if(do_parallel){
+    stop("Stub.  gcf_glm parallelization not implemented.")
+  }else{
+    site_dt[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(site_dt[METHOD!=std_method]$PRES)-GCF.pres )
+    site_dt[METHOD!=std_method]$POS.CAL  <- site_dt[METHOD!=std_method]$POS/GCF.pos
+    site_dt[METHOD!=std_method]$OPUE.CAL <- site_dt[METHOD!=std_method]$PRES.CAL*site_dt[METHOD!=std_method]$POS.CAL
 
-  site_dt[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(site_dt[METHOD!=std_method]$PRES)-GCF.pres )
-  site_dt[METHOD!=std_method]$POS.CAL  <- site_dt[METHOD!=std_method]$POS/GCF.pos
-  site_dt[METHOD!=std_method]$OPUE.CAL <- site_dt[METHOD!=std_method]$PRES.CAL*site_dt[METHOD!=std_method]$POS.CAL
+    site_dt <- cbind(site_dt,t(GCF.pres.quantile))
+    colnames(site_dt)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
+    site_dt <- cbind(site_dt,t(GCF.pos.quantile))
+    colnames(site_dt)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
 
-  site_dt <- cbind(site_dt,t(GCF.pres.quantile))
-  colnames(site_dt)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
-  site_dt <- cbind(site_dt,t(GCF.pos.quantile))
-  colnames(site_dt)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
+  }
 
   # Populate output list
   group_lstats <- list()
