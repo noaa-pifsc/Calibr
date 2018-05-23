@@ -183,7 +183,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
     message("Applying species effects to presence and positive models ...")
 
     tryCatch(
-
+      stop("Parallelization not implemented.")
       ,
       error=function(cond){
         message(unique(SET$GROUP) , ": ", trimws(cond), " Returning NA.")
@@ -207,7 +207,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
     lgroup_gcf <- lapply(fish_datalist,function(X){
       message("Group: ", unique(X$GROUP))
       tryCatch(
-        gcf_glm(SET=X, std_method=std_method)
+        gcf_glm_boot(SET=X, std_method=std_method)
 
         ,#End of code expresssion
         error=function(cond){
