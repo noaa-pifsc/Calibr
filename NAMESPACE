@@ -3,6 +3,7 @@
 export(calibrate_dataset)
 export(export_results)
 export(gcf_glm)
+export(gcf_glm_boot)
 export(gcf_glmm)
 export(load_dataset)
 export(rep_summary)
