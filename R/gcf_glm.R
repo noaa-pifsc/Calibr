@@ -24,27 +24,28 @@ gcf_glm_boot <- function (SET, std_method, min_obs=10) {
     stop("Parameter SET found as a list object.")
   }
 
-  POS <- SET[SET$DENSITY>0,]
+  #POS <- SET[SET$DENSITY>0,]
+  POS <- SET
 
-  if(nrow(POS) <= min_obs){
-    stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
-
-  }
-  if(length(unique(POS$METHOD)) != 2){
-    nmethods <- length(unique(POS$METHOD))
-    stop("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
-
-  }
-
-  SET$METHOD <- as.factor(SET$METHOD)
-  SET$BLOCK  <- as.factor(SET$BLOCK)
-  contrasts(SET$METHOD) <- c(0,1)
-  contrasts(SET$BLOCK)  <- "contr.sum"
-
-  POS$METHOD <- as.factor(POS$METHOD)
-  POS$BLOCK  <- as.factor(POS$BLOCK)
-  contrasts(POS$METHOD) <- c(0,1)
-  contrasts(POS$BLOCK)  <- "contr.sum"
+  # if(nrow(POS) <= min_obs){
+  #   stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
+  #
+  # }
+  # if(length(unique(POS$METHOD)) != 2){
+  #   nmethods <- length(unique(POS$METHOD))
+  #   stop("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
+  #
+  # }
+  #
+  # SET$METHOD <- as.factor(SET$METHOD)
+  # SET$BLOCK  <- as.factor(SET$BLOCK)
+  # contrasts(SET$METHOD) <- c(0,1)
+  # contrasts(SET$BLOCK)  <- "contr.sum"
+  #
+  # POS$METHOD <- as.factor(POS$METHOD)
+  # POS$BLOCK  <- as.factor(POS$BLOCK)
+  # contrasts(POS$METHOD) <- c(0,1)
+  # contrasts(POS$BLOCK)  <- "contr.sum"
 
 
   #positive-only (Eq. 3, Nadon, et al.)
@@ -124,7 +125,7 @@ gcf_glm_boot <- function (SET, std_method, min_obs=10) {
 
 }
 
-## TODO: RENAME THIS TO gcf_glm and rename original gcf_glm function to gcf_glm_boot
+
 #' Gear Calibration Factor summary table
 #'
 #' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
