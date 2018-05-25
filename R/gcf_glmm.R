@@ -50,8 +50,8 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   List.method  <- unique(ORIG$METHOD)
   secondary_method <- List.method[List.method!=std_method]
 
-  ORIG[METHOD==std_method]$METHOD  <- paste0("1_",std_method)
-  ORIG[METHOD==secondary_method]$METHOD <- paste0("2_",secondary_method)
+  #ORIG[METHOD==std_method]$METHOD  <- paste0("1_",std_method)
+  #ORIG[METHOD==secondary_method]$METHOD <- paste0("2_",secondary_method)
 
   ORIG$GROUP  <- as.factor(ORIG$GROUP)
   ORIG$METHOD <- as.factor(ORIG$METHOD)
