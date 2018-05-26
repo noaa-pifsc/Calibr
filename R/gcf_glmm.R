@@ -50,9 +50,6 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   List.method  <- unique(ORIG$METHOD)
   secondary_method <- List.method[List.method!=std_method]
 
-  #ORIG[METHOD==std_method]$METHOD  <- paste0("1_",std_method)
-  #ORIG[METHOD==secondary_method]$METHOD <- paste0("2_",secondary_method)
-
   ORIG$GROUP  <- as.factor(ORIG$GROUP)
   ORIG$METHOD <- as.factor(ORIG$METHOD)
   ORIG$BLOCK  <- as.factor(ORIG$BLOCK)
@@ -65,10 +62,10 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   #==========Modeling======================================================================
   Results.pres <- data.frame(matrix(ncol=n_sample,nrow=num_species*2+2))
   colnames(Results.pres)       <- paste0("V",formatC(1:n_sample,width=2,flag="0"))
-  row.names(Results.pres)[1:2] <- c(paste0("1_",std_method),paste0("2_",secondary_method))
+  row.names(Results.pres)[1:2] <- c(std_method,secondary_method)
   for(i in 1:num_species){
-    row.names(Results.pres)[i*2+1]   <- paste0(Species.list[i],paste0(":1_",std_method))
-    row.names(Results.pres)[i*2+2]   <- paste0(Species.list[i],paste0(":2_",secondary_method))
+    row.names(Results.pres)[i*2+1]   <- paste0(Species.list[i],paste0(":",std_method))
+    row.names(Results.pres)[i*2+2]   <- paste0(Species.list[i],paste0(":",secondary_method))
   }
   Results.pos <- data.frame(Results.pres)
   Effects.list <- row.names(Results.pres)
