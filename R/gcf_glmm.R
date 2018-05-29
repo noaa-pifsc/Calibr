@@ -35,6 +35,9 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
 
   ORIG1 <- data.table(ORIG)
 
+  if(n_sample<2){
+    stop("Number of samples must be 2 or more.")
+  }
 
   # Filter groups with small positive-observation numbers
   ORIG <- data.table(ORIG)
