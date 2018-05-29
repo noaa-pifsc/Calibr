@@ -92,8 +92,9 @@ gcf_glmm <- function (ORIG, std_method, min_obs=10, n_sample=5) {
   pboptions(type= "txt")
 
   InputList <- list()
-  InputList[[1]] <- ORIG # Base case
   message("Setting up base case ...")
+  InputList[[1]] <- ORIG # Base case
+  message("Bootstraping the base case ", n_sample-1," time(s) ...")
   for(i in 2:n_sample){
     InputList[[i]] <- ddply(ORIG,.(GROUP, BLOCK, METHOD),function(x) x[sample(nrow(x),replace=TRUE),])
   }
