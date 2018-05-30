@@ -53,75 +53,7 @@ gcf_glm_boot <- function (SET, std_method, min_obs=10) {
   #presnce/absence (Eq. 4, Nadon et al. )
   glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
 
-
-  # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
-  mu.pres.method    <- glm.pres$coefficients[2]
-  SD.pres.method    <- summary(glm.pres)$coefficients[2,2]
-  GCF.pres          <- mu.pres.method
-  pres.method       <- rnorm(n=1000,mean=mu.pres.method,sd=SD.pres.method)
-  GCF.pres.dist     <- pres.method # Additive method effect in logit space
-  GCF.pres.quantile <- format(quantile(GCF.pres.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
-
-  mu.pos.method     <- glm.pos$coefficients[2]
-  SD.pos.method     <- summary(glm.pos)$coefficients[2,2]
-  GCF.pos           <- exp(mu.pos.method)
-  pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
-  GCF.pos.dist      <- exp(pos.method)
-  GCF.pos.quantile  <- format(quantile(GCF.pos.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
-
-  # Convert original dataset using the GCFs to confirm that model worked correctly
-  SET <- data.table(SET)
-  POS <- data.table(POS)
-
-  SET <- SET[order(METHOD)]
-  POS <- POS[order(METHOD)]
-
-  site_pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD,BLOCK)]
-  site_pres  <- site_pres[,list(PRES=mean(PRES)),by=list(METHOD)]
-
-  site_pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD,BLOCK)]
-  site_pos   <- site_pos[,list(POS=mean(POS)),by=list(METHOD)]
-
-  site_dt       <- merge(site_pres,site_pos)
-  site_dt$OPUE  <- site_dt$PRES*site_dt$POS
-
-  site_dt$PRES.CAL <- site_dt$PRES
-  site_dt$POS.CAL  <- site_dt$POS
-  site_dt$OPUE.CAL <- site_dt$OPUE
-
-
-  site_dt[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(site_dt[METHOD!=std_method]$PRES)-GCF.pres )
-  site_dt[METHOD!=std_method]$POS.CAL  <- site_dt[METHOD!=std_method]$POS/GCF.pos
-  site_dt[METHOD!=std_method]$OPUE.CAL <- site_dt[METHOD!=std_method]$PRES.CAL*site_dt[METHOD!=std_method]$POS.CAL
-
-  site_dt <- cbind(site_dt,t(GCF.pres.quantile))
-  colnames(site_dt)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
-  site_dt <- cbind(site_dt,t(GCF.pos.quantile))
-  colnames(site_dt)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
-
-  # Populate output list
-  group_lstats <- list()
-  group_lstats[["GROUP"]]  <- unique(SET$GROUP)
-  group_lstats[["METHOD"]] <- unique(SET$METHOD)
-
-  #group_lstats[["GCF.PRES"]]    <- unname(format(GCF.pres.quantile["50%"], digits=2))
-  group_lstats[["GCF.PRES"]]     <- unname(format(GCF.pres,digits=2)) # Base case instead of mean
-  group_lstats[["GCF.PRES_2.5"]] <- unname(format(GCF.pres.quantile["2.5%"], digits=2))
-  group_lstats[["GCF.PRES_95"]]  <- unname(format(GCF.pres.quantile["97.5%"], digits=2))
-
-  #group_lstats[["GCF.POS"]]    <- unname(format(GCF.pos.quantile["50%"], digits=2))
-  group_lstats[["GCF.POS"]]     <- unname(format(GCF.pos,digits=2)) # Base case instead of mean
-  group_lstats[["GCF.POS_2.5"]] <- unname(format(GCF.pos.quantile["2.5%"], digits=2))
-  group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
-
-  group_lstats[["PRES"]]     <- format(site_dt$PRES, digits=2)
-  group_lstats[["PRES.CAL"]] <- format(site_dt$PRES.CAL, digits=2)
-  group_lstats[["POS"]]      <- format(site_dt$POS, digits=2)
-  group_lstats[["POS.CAL"]]  <- format(site_dt$POS.CAL, digits=2)
-  group_lstats[["OPUE"]]     <- format(site_dt$OPUE, digits=2)
-  group_lstats[["OPUE.CAL"]] <- format(site_dt$OPUE.CAL, digits=2)
-
-  return(as.data.table(group_lstats))
+  return(list(PRES=glm.pres,POS=glm.pos))
 
 }
 
@@ -204,25 +136,78 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
     stopCluster(cl)
 
   }else{
-    #Lapply gcf function for all species
-    lgroup_gcf <- lapply(fish_datalist,function(X){
-      message("Group: ", unique(X$GROUP))
-      tryCatch(
-        gcf_glm_boot(SET=X, std_method=std_method)
-
-        ,#End of code expresssion
-        error=function(cond){
-          message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
-          return(NA)
-        },
-        warning=function(cond){
-          message(unique(X$GROUP) , ": " , trimws(cond))
-        }
-      )
-    })
+    stop("Non-Paralleization GLMM obsolescent")
   } #END
 
+  # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
+  mu.pres.method    <- glm.pres$coefficients[2]
+  SD.pres.method    <- summary(glm.pres)$coefficients[2,2]
+  GCF.pres          <- mu.pres.method
+  pres.method       <- rnorm(n=1000,mean=mu.pres.method,sd=SD.pres.method)
+  GCF.pres.dist     <- pres.method # Additive method effect in logit space
+  GCF.pres.quantile <- format(quantile(GCF.pres.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
+  mu.pos.method     <- glm.pos$coefficients[2]
+  SD.pos.method     <- summary(glm.pos)$coefficients[2,2]
+  GCF.pos           <- exp(mu.pos.method)
+  pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
+  GCF.pos.dist      <- exp(pos.method)
+  GCF.pos.quantile  <- format(quantile(GCF.pos.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
+  #calibrate_dataset-------------------------------------------------------------------
+  # Convert original dataset using the GCFs to confirm that model worked correctly
+  SET <- data.table(SET)
+  POS <- data.table(POS)
+
+  SET <- SET[order(METHOD)]
+  POS <- POS[order(METHOD)]
+
+  site_pres  <- SET[,list(PRES=mean(PRESENCE)),by=list(METHOD,BLOCK)]
+  site_pres  <- site_pres[,list(PRES=mean(PRES)),by=list(METHOD)]
+
+  site_pos   <- POS[,list(POS=mean(DENSITY)),by=list(METHOD,BLOCK)]
+  site_pos   <- site_pos[,list(POS=mean(POS)),by=list(METHOD)]
+
+  site_dt       <- merge(site_pres,site_pos)
+  site_dt$OPUE  <- site_dt$PRES*site_dt$POS
+
+  site_dt$PRES.CAL <- site_dt$PRES
+  site_dt$POS.CAL  <- site_dt$POS
+  site_dt$OPUE.CAL <- site_dt$OPUE
+
+  site_dt[METHOD!=std_method]$PRES.CAL <- inv.logit(logit(site_dt[METHOD!=std_method]$PRES)-GCF.pres )
+  site_dt[METHOD!=std_method]$POS.CAL  <- site_dt[METHOD!=std_method]$POS/GCF.pos
+  site_dt[METHOD!=std_method]$OPUE.CAL <- site_dt[METHOD!=std_method]$PRES.CAL*site_dt[METHOD!=std_method]$POS.CAL
+
+  site_dt <- cbind(site_dt,t(GCF.pres.quantile))
+  colnames(site_dt)[8:10]  <- c("GCF.PRES","GCF.PRES_2.5","GCF.PRES_95")
+  site_dt <- cbind(site_dt,t(GCF.pos.quantile))
+  colnames(site_dt)[11:13] <- c("GCF.POS","GCF.POS_2.5","GCF.POS_95")
+
+  #END calibrate_dataset-------------------------------
+
+  # Populate output list
+  group_lstats <- list()
+  group_lstats[["GROUP"]]  <- unique(SET$GROUP)
+  group_lstats[["METHOD"]] <- unique(SET$METHOD)
+
+  #group_lstats[["GCF.PRES"]]    <- unname(format(GCF.pres.quantile["50%"], digits=2))
+  group_lstats[["GCF.PRES"]]     <- unname(format(GCF.pres,digits=2)) # Base case instead of mean
+  group_lstats[["GCF.PRES_2.5"]] <- unname(format(GCF.pres.quantile["2.5%"], digits=2))
+  group_lstats[["GCF.PRES_95"]]  <- unname(format(GCF.pres.quantile["97.5%"], digits=2))
+
+  #group_lstats[["GCF.POS"]]    <- unname(format(GCF.pos.quantile["50%"], digits=2))
+  group_lstats[["GCF.POS"]]     <- unname(format(GCF.pos,digits=2)) # Base case instead of mean
+  group_lstats[["GCF.POS_2.5"]] <- unname(format(GCF.pos.quantile["2.5%"], digits=2))
+  group_lstats[["GCF.POS_95"]]  <- unname(format(GCF.pos.quantile["97.5%"], digits=2))
+
+  group_lstats[["PRES"]]     <- format(site_dt$PRES, digits=2)
+  group_lstats[["PRES.CAL"]] <- format(site_dt$PRES.CAL, digits=2)
+  group_lstats[["POS"]]      <- format(site_dt$POS, digits=2)
+  group_lstats[["POS.CAL"]]  <- format(site_dt$POS.CAL, digits=2)
+  group_lstats[["OPUE"]]     <- format(site_dt$OPUE, digits=2)
+  group_lstats[["OPUE.CAL"]] <- format(site_dt$OPUE.CAL, digits=2)
+
+  return(as.data.table(group_lstats))
 
 }
