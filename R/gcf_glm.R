@@ -17,15 +17,12 @@ if(getRversion() >= "2.15.1")  {
 #' @importFrom boot inv.logit logit
 #'
 #' @export
-gcf_glm_boot <- function (SET, std_method, min_obs=10) {
+gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 
 
   if(class(SET) == "list"){
     stop("Parameter SET found as a list object.")
   }
-
-  #POS <- SET[SET$DENSITY>0,]
-  POS <- SET
 
   # if(nrow(POS) <= min_obs){
   #   stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
@@ -37,107 +34,28 @@ gcf_glm_boot <- function (SET, std_method, min_obs=10) {
   #
   # }
   #
-  # SET$METHOD <- as.factor(SET$METHOD)
-  # SET$BLOCK  <- as.factor(SET$BLOCK)
-  # contrasts(SET$METHOD) <- c(0,1)
-  # contrasts(SET$BLOCK)  <- "contr.sum"
-  #
-  # POS$METHOD <- as.factor(POS$METHOD)
-  # POS$BLOCK  <- as.factor(POS$BLOCK)
-  # contrasts(POS$METHOD) <- c(0,1)
-  # contrasts(POS$BLOCK)  <- "contr.sum"
 
-
-  #positive-only (Eq. 3, Nadon, et al.)
-  glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
-  #presnce/absence (Eq. 4, Nadon et al. )
-  glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
-
-  return(list(PRES=glm.pres,POS=glm.pos))
-
-}
-
-
-#' Gear Calibration Factor summary table
-#'
-#' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
-#'
-#' @param SET Survey Dataset
-#' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
-#' @param min_obs Minimum limit for the number of observations.
-#' @param n_sample Number of Samples
-#' @param do_parallel Parallel Option
-#'
-#' @import data.table
-#' @importFrom pbapply pblapply pboptions
-#' @importFrom plyr ddply .
-#' @importFrom parallel clusterEvalQ makeCluster stopCluster parLapply detectCores
-#' @importFrom boot inv.logit
-#'
-#'
-#' @export
-gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) {
-
-
-  message("Filter groups with small positive-observation numbers ... ")
-  SET_dt <- data.table(SET)
-  POS <- table(SET_dt[DENSITY>0]$GROUP)
+  #Filter groups with small positive-observation numbers
+  SET <- data.table(SET)
+  POS <- table(SET[DENSITY>0]$GROUP)
   POS <- POS[POS>=min_obs]
   POS <- names(POS)
-  SET_dt <- subset(SET_dt, GROUP %in% POS)
+  SET <- subset(SET, GROUP %in% POS)
 
-  SET_dt$METHOD <- as.factor(SET_dt$METHOD)
-  SET_dt$BLOCK  <- as.factor(SET_dt$BLOCK)
-  contrasts(SET_dt$METHOD) <- c(0,1)
-  contrasts(SET_dt$BLOCK)  <- "contr.sum"
+  SET$METHOD <- as.factor(SET$METHOD)
+  SET$BLOCK  <- as.factor(SET$BLOCK)
+  contrasts(SET$METHOD) <- c(0,1)
+  contrasts(SET$BLOCK)  <- "contr.sum"
 
   POS$METHOD <- as.factor(POS$METHOD)
   POS$BLOCK  <- as.factor(POS$BLOCK)
   contrasts(POS$METHOD) <- c(0,1)
   contrasts(POS$BLOCK)  <- "contr.sum"
 
-
-
-  message("Spliting dataset by GROUP value ... ")
-
-  #Split the dataset into a list of smaller sets by GROUP value.
-  fish_datalist <- split(SET, SET$GROUP)
-
-
-  if(do_parallel){
-
-    #Parallel processing section
-    message("Setting up parallel processing clusters ...")
-    no_cores <- detectCores()-1
-    cl <- makeCluster(no_cores)
-
-    pboptions(type = "txt")
-
-    message("Applying species effects to presence and positive models ...")
-
-    tryCatch(
-      stop("Parallelization not implemented.")
-      ,
-      error=function(cond){
-        message(unique(SET$GROUP) , ": ", trimws(cond), " Returning NA.")
-        return(NA)
-      },
-      warning=function(cond){
-        message(unique(SET$GROUP) , ": " , trimws(cond))
-      }
-    )
-    out_time <- system.time( Out <- pblapply(SET,gcf_glm,cl=cl) )
-
-    message("Parallel processing times (in seconds):")
-    print(out_time)
-    message("Elapsed (per minute): ~", format(round(out_time[3]/60,4), nsmall=2), " min(s)")
-
-    message("Done.")
-    stopCluster(cl)
-
-  }else{
-    stop("Non-Paralleization GLMM obsolescent")
-  } #END
+  #positive-only (Eq. 3, Nadon, et al.)
+  glm.pos  <- suppressWarnings(glm(log(DENSITY)~METHOD+BLOCK,  data=POS ))
+  #presnce/absence (Eq. 4, Nadon et al. )
+  glm.pres <- suppressWarnings(glm(PRESENCE~METHOD+BLOCK, family=binomial(link="logit"), data=SET ))
 
   # Coefficients and Monte Carlo to obtain Gear Calibration Factors with conf. intervals
   mu.pres.method    <- glm.pres$coefficients[2]
@@ -209,5 +127,107 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
   group_lstats[["OPUE.CAL"]] <- format(site_dt$OPUE.CAL, digits=2)
 
   return(as.data.table(group_lstats))
+}
+
+
+#' Gear Calibration Factor summary table
+#'
+#' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
+#'
+#' @param SET Survey Dataset
+#' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
+#' @param min_obs Minimum limit for the number of observations.
+#' @param n_sample Number of Samples
+#' @param do_parallel Parallel Option
+#'
+#' @import data.table
+#' @importFrom pbapply pblapply pboptions
+#' @importFrom plyr ddply .
+#' @importFrom parallel clusterEvalQ makeCluster stopCluster parLapply detectCores
+#' @importFrom boot inv.logit
+#'
+#'
+#' @export
+gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) {
+
+
+  # message("Filter groups with small positive-observation numbers ... ")
+  # SET_dt <- data.table(SET)
+  # POS <- table(SET_dt[DENSITY>0]$GROUP)
+  # POS <- POS[POS>=min_obs]
+  # POS <- names(POS)
+  # SET_dt <- subset(SET_dt, GROUP %in% POS)
+  #
+  # SET_dt$METHOD <- as.factor(SET_dt$METHOD)
+  # SET_dt$BLOCK  <- as.factor(SET_dt$BLOCK)
+  # contrasts(SET_dt$METHOD) <- c(0,1)
+  # contrasts(SET_dt$BLOCK)  <- "contr.sum"
+  #
+  # POS$METHOD <- as.factor(POS$METHOD)
+  # POS$BLOCK  <- as.factor(POS$BLOCK)
+  # contrasts(POS$METHOD) <- c(0,1)
+  # contrasts(POS$BLOCK)  <- "contr.sum"
+
+
+
+  message("Spliting dataset by GROUP value ... ")
+
+  #Split the dataset into a list of smaller sets by GROUP value.
+  fish_datalist <- split(SET, SET$GROUP)
+
+
+  if(do_parallel){
+
+    #Parallel processing section
+    message("Setting up parallel processing clusters ...")
+    no_cores <- detectCores()-1
+    cl <- makeCluster(no_cores)
+
+    pboptions(type = "txt")
+
+    message("Applying species effects to presence and positive models ...")
+
+    tryCatch(
+      stop("Parallelization not implemented.")
+      ,
+      error=function(cond){
+        message(unique(SET$GROUP) , ": ", trimws(cond), " Returning NA.")
+        return(NA)
+      },
+      warning=function(cond){
+        message(unique(SET$GROUP) , ": " , trimws(cond))
+      }
+    )
+    out_time <- system.time( Out <- pblapply(SET,gcf_glm,cl=cl) )
+
+    message("Parallel processing times (in seconds):")
+    print(out_time)
+    message("Elapsed (per minute): ~", format(round(out_time[3]/60,4), nsmall=2), " min(s)")
+
+    message("Done.")
+    stopCluster(cl)
+
+  }else{
+
+    #Lapply gcf function for all species
+    lgroup_gcf <- lapply(fish_datalist,function(X){
+      message("Group: ", unique(X$GROUP))
+      tryCatch(
+        gcf_glm_apply(SET=X, std_method=std_method)
+
+        ,#End of code expresssion
+        error=function(cond){
+          message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
+          return(NA)
+        },
+        warning=function(cond){
+          message(unique(X$GROUP) , ": " , trimws(cond))
+        }
+      )
+    }) #END lapply
+
+  } #END else
+
+
 
 }
