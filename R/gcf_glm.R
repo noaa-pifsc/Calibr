@@ -215,7 +215,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
   }else{
 
     #Lapply gcf function for all species
-    lgroup_gcf <- lapply(fish_datalist,function(X){
+    lgroup_gcf <- lapply(list_groupset,function(X){
       message("Group: ", unique(X$GROUP))
       tryCatch(
         gcf_glm_apply(SET=X, std_method=std_method)
