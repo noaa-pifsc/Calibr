@@ -51,10 +51,6 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
   #Presume that the 1st level of METHOD factor will always be the standard method.
   std_method_factorname <- paste0("1_",std_method)
 
-  message("Spliting dataset by GROUP value ... ")
-  #Split the dataset into a list of smaller sets by GROUP value.
-  fish_datalist <- split(SET, SET$GROUP)
-
   message( "====================================================================\n",
            "Applying ", stat_model, " Gear Calibration Factor to dataset ... \n",
            "====================================================================")
