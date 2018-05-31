@@ -173,7 +173,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
   message("Spliting dataset by GROUP value ... ")
 
   #Split the dataset into a list of smaller sets by GROUP value.
-  fish_datalist <- split(SET, SET$GROUP)
+  list_groupset <- split(SET, SET$GROUP)
 
 
   if(do_parallel){
@@ -188,17 +188,17 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
     message("Applying species effects to presence and positive models ...")
 
     tryCatch(
-      stop("Parallelization not implemented.")
+      out_time <- system.time( Out <- pblapply(list_groupset,gcf_glm_apply,cl=cl) )
       ,
       error=function(cond){
-        message(unique(SET$GROUP) , ": ", trimws(cond), " Returning NA.")
+        message(unique(list_groupset$GROUP) , ": ", trimws(cond))
         return(NA)
       },
       warning=function(cond){
-        message(unique(SET$GROUP) , ": " , trimws(cond))
+        message(unique(list_groupset$GROUP) , ": " , trimws(cond))
       }
     )
-    out_time <- system.time( Out <- pblapply(SET,gcf_glm,cl=cl) )
+
 
     message("Parallel processing times (in seconds):")
     print(out_time)
