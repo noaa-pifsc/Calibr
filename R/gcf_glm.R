@@ -228,6 +228,11 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
 
   } #END else
 
+  #Remove GROUP objects that have null(NA) data
+  lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
+  #Summary descriptive statistics for each GROUP
+  gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
 
 
+  retrun(gcf_summary)
 }

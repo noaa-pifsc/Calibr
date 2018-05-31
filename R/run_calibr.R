@@ -61,30 +61,31 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   if(stat_model=="GLM"){
 
-    #Lapply gcf function for all species
-    lgroup_gcf <- lapply(fish_datalist,function(X){
-      message("Group: ", unique(X$GROUP))
-      tryCatch(
-        if(stat_model=="GLM"){
-          gcf_glm(SET=X, std_method=std_method_factorname)
-        }
-        ,#End of code expresssion
-        error=function(cond){
-          message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
-          return(NA)
-        },
-        warning=function(cond){
-          message(unique(X$GROUP) , ": " , trimws(cond))
-        }
-      )
-
-    })
-
-    #Remove GROUP objects that have null(NA) data
-    lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
-    #Summary descriptive statistics for each GROUP
-    gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
-    n_sufficentREPS <- length(lgroup_calibrated)
+    # #Lapply gcf function for all species
+    # lgroup_gcf <- lapply(fish_datalist,function(X){
+    #   message("Group: ", unique(X$GROUP))
+    #   tryCatch(
+    #     if(stat_model=="GLM"){
+    #       gcf_glm(SET=X, std_method=std_method_factorname)
+    #     }
+    #     ,#End of code expresssion
+    #     error=function(cond){
+    #       message(unique(X$GROUP) , ": ", trimws(cond), " Returning NA.")
+    #       return(NA)
+    #     },
+    #     warning=function(cond){
+    #       message(unique(X$GROUP) , ": " , trimws(cond))
+    #     }
+    #   )
+    #
+    # })
+    #
+    # #Remove GROUP objects that have null(NA) data
+    # lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
+    # #Summary descriptive statistics for each GROUP
+    # gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
+    gcf_results <- gcf_glm(SET, std_method = std_method_factorname, n_sample = n_sample)
+    n_sufficentREPS <- nrow(gcf_results$SUMMARY) #length(lgroup_calibrated)
 
   }else if(stat_model=="GLMM"){
 
