@@ -185,7 +185,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
 
     pboptions(type = "txt")
 
-    message("Applying species effects to presence and positive models ...")
+    message("Applying glms for each GROUP ...")
 
     tryCatch(
       out_time <- system.time( Out <- pblapply(list_groupset,gcf_glm_apply,cl=cl) )
