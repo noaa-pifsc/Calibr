@@ -187,18 +187,18 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
 
     message("Applying glms for each GROUP ...")
 
-    tryCatch(
-      out_time <- system.time( Out <- pblapply(list_groupset,gcf_glm_apply,cl=cl) )
-      ,
-      error=function(cond){
-        message(unique(list_groupset$GROUP) , ": ", trimws(cond))
-        return(NA)
-      },
-      warning=function(cond){
-        message(unique(list_groupset$GROUP) , ": " , trimws(cond))
-      }
-    )
-
+    # tryCatch(
+    #
+    #   ,
+    #   error=function(cond){
+    #     message(unique(list_groupset$GROUP) , ": ", trimws(cond))
+    #     return(NA)
+    #   },
+    #   warning=function(cond){
+    #     message(unique(list_groupset$GROUP) , ": " , trimws(cond))
+    #   }
+    # )
+    out_time <- system.time( Out <- pblapply(list_groupset,gcf_glm_apply,cl=cl) )
 
     message("Parallel processing times (in seconds):")
     print(out_time)
