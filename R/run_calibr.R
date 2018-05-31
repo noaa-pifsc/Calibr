@@ -25,10 +25,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   stat_model <- match.arg(stat_model)
 
-
-
-
-  # Insure that the input dataset is of the format data.table to prevent errors
+    # Insure that the input dataset is of the format data.table to prevent errors
   SET <- data.frame(SET)
 
   #If std_method doesn't match any of the two methods, then throw an error
@@ -81,7 +78,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
     # #Summary descriptive statistics for each GROUP
     # gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
     gcf_results <- gcf_glm(SET, std_method = std_method_factorname, n_sample = n_sample)
-    n_sufficentREPS <- nrow(gcf_results$SUMMARY) #length(lgroup_calibrated)
+    n_sufficentREPS <- nrow(gcf_results$SUMMARY)
 
   }else if(stat_model=="GLMM"){
 

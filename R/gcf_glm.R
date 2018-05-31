@@ -207,6 +207,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) 
     message("Done.")
     stopCluster(cl)
 
+
     #Supress progressbar onexit
     pbo <- pboptions(type = "none")
     on.exit(pboptions(pbo), add = TRUE)
