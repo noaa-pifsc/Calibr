@@ -24,6 +24,12 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
     stop("Parameter SET found as a list object.")
   }
 
+  #Filter groups with small positive-observation numbers
+  SET <- data.table(SET)
+  POS <- SET[DENSITY>0]
+  pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
+  SET <- subset(SET, METHOD %in% pos_obs_methods)
+
   # if(nrow(POS) <= min_obs){
   #   stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
   #
@@ -34,13 +40,6 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
   #
   # }
   #
-
-  #Filter groups with small positive-observation numbers
-  SET <- data.table(SET)
-  POS <- table(SET[DENSITY>0]$GROUP)
-  POS <- POS[POS>=min_obs]
-  POS <- names(POS)
-  SET <- subset(SET, GROUP %in% POS)
 
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
