@@ -136,7 +136,6 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param min_obs Minimum limit for the number of observations.
-#' @param n_sample Number of Samples
 #' @param do_parallel Parallel Option
 #'
 #' @import data.table
@@ -147,7 +146,7 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 #'
 #'
 #' @export
-gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=TRUE) {
+gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
 
   # message("Filter groups with small positive-observation numbers ... ")

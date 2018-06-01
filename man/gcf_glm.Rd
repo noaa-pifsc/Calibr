@@ -4,7 +4,7 @@
 \alias{gcf_glm}
 \title{Gear Calibration Factor summary table}
 \usage{
-gcf_glm(SET, std_method, min_obs = 10, n_sample = 5, do_parallel = FALSE)
+gcf_glm(SET, std_method, min_obs = 10, do_parallel = TRUE)
 }
 \arguments{
 \item{SET}{Survey Dataset}
@@ -12,8 +12,6 @@ gcf_glm(SET, std_method, min_obs = 10, n_sample = 5, do_parallel = FALSE)
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 
 \item{min_obs}{Minimum limit for the number of observations.}
-
-\item{n_sample}{Number of Samples}
 
 \item{do_parallel}{Parallel Option}
 }

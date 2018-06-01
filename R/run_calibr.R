@@ -84,7 +84,7 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
     # lgroup_calibrated <- lgroup_gcf[!(is.na(lgroup_gcf))]
     # #Summary descriptive statistics for each GROUP
     # gcf_summary <- suppressMessages(Reduce(function(...)merge(...,all=TRUE),lgroup_calibrated))
-    gcf_summary <- gcf_glm(SET, std_method = std_method_factorname, n_sample = n_sample)
+    gcf_summary <- gcf_glm(SET, std_method = std_method_factorname)
     n_sufficentREPS <- nrow(gcf_summary)
 
   }else if(stat_model=="GLMM"){
