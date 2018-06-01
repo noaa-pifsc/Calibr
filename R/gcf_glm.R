@@ -147,7 +147,7 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 #'
 #'
 #' @export
-gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=FALSE) {
+gcf_glm <- function(SET, std_method, min_obs=10, n_sample=5, do_parallel=TRUE) {
 
 
   # message("Filter groups with small positive-observation numbers ... ")
