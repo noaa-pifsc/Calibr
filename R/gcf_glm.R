@@ -153,7 +153,8 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
     message("Applying glms for each GROUP ...")
 
-    out_time <- system.time( lgroup_gcf <- pblapply(list_groupset, gcf_glm_apply, std_method=std_method, cl=cl) )
+    out_time <- system.time( lgroup_gcf <- pblapply(list_groupset, gcf_glm_apply,
+                                                    std_method=std_method, min_obs=min_obs, cl=cl) )
 
     message("Parallel processing times (in seconds):")
     print(out_time)
