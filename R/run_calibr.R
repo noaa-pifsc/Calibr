@@ -10,7 +10,9 @@
 #' @param SET Survey Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param stat_model Type of Generalized Linear Model used.
+#' @param min_obs Minimum limit for the number of observations.
 #' @param n_sample Number of Samples
+#' @param parallel If avialable, the option to enable/disable parallelize glm/glmm process. Default is TRUE.
 #'
 #' @return List object with three items:
 #' \itemize{
@@ -21,7 +23,8 @@
 #'
 #' @export
 #'
-run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
+run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"),
+                       min_obs=10, n_sample=5, parallel=TRUE){
 
   stat_model <- match.arg(stat_model)
 
@@ -61,12 +64,14 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"), n_sample=5){
 
   if(stat_model=="GLM"){
 
-    gcf_summary <- gcf_glm(SET, std_method = std_method_factorname)
+    gcf_summary <- gcf_glm(SET, std_method = std_method_factorname,
+                           min_obs = min_obs, do_parallel = parallel)
     n_sufficentREPS <- nrow(gcf_summary)
 
   }else if(stat_model=="GLMM"){
 
-    gcf_results <- gcf_glmm(ORIG=SET, std_method=std_method_factorname, n_sample=n_sample)
+    gcf_results <- gcf_glmm(ORIG=SET, std_method=std_method_factorname,
+                            min_obs = min_obs, n_sample=n_sample)
     n_sufficentREPS <- nrow(gcf_results$SUMMARY)
     gcf_summary <- gcf_results$SUMMARY
   }

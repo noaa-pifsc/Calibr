@@ -4,7 +4,8 @@
 \alias{run_calibr}
 \title{Survey dataset by species group and summaries}
 \usage{
-run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"), n_sample = 5)
+run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"), min_obs = 10,
+  n_sample = 5, parallel = TRUE)
 }
 \arguments{
 \item{SET}{Survey Dataset}
@@ -13,7 +14,11 @@ run_calibr(SET, std_method, stat_model = c("GLM", "GLMM"), n_sample = 5)
 
 \item{stat_model}{Type of Generalized Linear Model used.}
 
+\item{min_obs}{Minimum limit for the number of observations.}
+
 \item{n_sample}{Number of Samples}
+
+\item{parallel}{If avialable, the option to enable/disable parallelize glm/glmm process. Default is TRUE.}
 }
 \value{
 List object with three items:
