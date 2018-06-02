@@ -30,17 +30,6 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
   pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
   SET <- subset(SET, METHOD %in% pos_obs_methods)
 
-  # if(nrow(POS) <= min_obs){
-  #   stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
-  #
-  # }
-  # if(length(unique(POS$METHOD)) != 2){
-  #   nmethods <- length(unique(POS$METHOD))
-  #   stop("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
-  #
-  # }
-  #
-
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
   contrasts(SET$METHOD) <- c(0,1)
@@ -149,30 +138,11 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
 
-  # message("Filter groups with small positive-observation numbers ... ")
-  # SET_dt <- data.table(SET)
-  # POS <- table(SET_dt[DENSITY>0]$GROUP)
-  # POS <- POS[POS>=min_obs]
-  # POS <- names(POS)
-  # SET_dt <- subset(SET_dt, GROUP %in% POS)
-  #
-  # SET_dt$METHOD <- as.factor(SET_dt$METHOD)
-  # SET_dt$BLOCK  <- as.factor(SET_dt$BLOCK)
-  # contrasts(SET_dt$METHOD) <- c(0,1)
-  # contrasts(SET_dt$BLOCK)  <- "contr.sum"
-  #
-  # POS$METHOD <- as.factor(POS$METHOD)
-  # POS$BLOCK  <- as.factor(POS$BLOCK)
-  # contrasts(POS$METHOD) <- c(0,1)
-  # contrasts(POS$BLOCK)  <- "contr.sum"
-
-
 
   message("Spliting dataset by GROUP value ... ")
 
   #Split the dataset into a list of smaller sets by GROUP value.
   list_groupset <- split(SET, SET$GROUP)
-
 
   if(do_parallel){
 
@@ -185,17 +155,6 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
     message("Applying glms for each GROUP ...")
 
-    # tryCatch(
-    #
-    #   ,
-    #   error=function(cond){
-    #     message(unique(list_groupset$GROUP) , ": ", trimws(cond))
-    #     return(NA)
-    #   },
-    #   warning=function(cond){
-    #     message(unique(list_groupset$GROUP) , ": " , trimws(cond))
-    #   }
-    # )
     out_time <- system.time( lgroup_gcf <- pblapply(list_groupset, gcf_glm_apply, std_method=std_method, cl=cl) )
 
     message("Parallel processing times (in seconds):")
