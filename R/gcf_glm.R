@@ -138,10 +138,8 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
 
-
-  message("Spliting dataset by GROUP value ... ")
-
   #Split the dataset into a list of smaller sets by GROUP value.
+  message("Splitting dataset by GROUP value ... ")
   list_groupset <- split(SET, SET$GROUP)
 
   if(do_parallel){
