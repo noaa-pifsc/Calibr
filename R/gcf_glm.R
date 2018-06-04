@@ -187,6 +187,7 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
       )
     }) #END lapply
 
+    message("Done.")
   } #END else
 
   #Remove GROUP objects that have null(NA) data

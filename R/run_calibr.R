@@ -28,11 +28,15 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"),
 
   stat_model <- match.arg(stat_model)
 
-    # Insure that the input dataset is of the format data.table to prevent errors
+  # Insure that the input dataset is of the format data.table to prevent errors
   SET <- data.frame(SET)
 
   #If std_method doesn't match any of the two methods, then throw an error
   set_methods <- unique(SET$METHOD)
+
+  message( "====================================================================\n",
+           "Input dataset preparation ... \n",
+           "====================================================================")
 
   if(!any(std_method %in% set_methods)){
     stop("Invalid method name: '", std_method, "' not found in dataset.")
@@ -52,11 +56,9 @@ run_calibr <- function(SET, std_method, stat_model=c("GLM","GLMM"),
   std_method_factorname <- paste0("1_",std_method)
 
   #Split the dataset into a list of smaller sets by GROUP value.
-  message( "====================================================================\n",
-           "Splitting dataset by GROUP value ... \n",
-           "====================================================================")
+  message( "Splitting dataset by GROUP value ... ")
   group_datalist <- split(SET, SET$GROUP)
-
+  message ("Done.")
 
   message( "====================================================================\n",
            "Applying ", stat_model, " Gear Calibration Factor to dataset ... \n",
