@@ -4,10 +4,12 @@
 \alias{gcf_glm_apply}
 \title{Gear Calibration Factor summary table}
 \usage{
-gcf_glm_apply(SET, std_method, min_obs = 10)
+gcf_glm_apply(SET, POS, std_method, min_obs = 10)
 }
 \arguments{
 \item{SET}{Survey Dataset}
+
+\item{POS}{Positive Observations from Dataset}
 
 \item{std_method}{Denotes Survey dataset METHOD string as the Standard METHOD}
 

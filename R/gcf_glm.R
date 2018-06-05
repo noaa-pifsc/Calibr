@@ -8,6 +8,7 @@ if(getRversion() >= "2.15.1")  {
 #' Sets summary table for the Gear Calibration Factor and Observed Effort Per Unit per species group.
 #'
 #' @param SET Survey Dataset
+#' @param POS Positive Observations from Dataset
 #' @param std_method Denotes Survey dataset METHOD string as the Standard METHOD
 #' @param min_obs Minimum limit for the number of observations.
 #'
@@ -17,18 +18,12 @@ if(getRversion() >= "2.15.1")  {
 #' @importFrom boot inv.logit logit
 #'
 #' @export
-gcf_glm_apply <- function (SET, std_method, min_obs=10) {
+gcf_glm_apply <- function (SET, POS, std_method, min_obs=10) {
 
 
   if(class(SET) == "list"){
     stop("Parameter SET found as a list object.")
   }
-
-  # #Filter groups with small positive-observation numbers
-  # SET <- data.table(SET)
-  # POS <- SET[DENSITY>0]
-  # pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
-  # SET <- subset(SET, METHOD %in% pos_obs_methods)
 
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
@@ -161,8 +156,8 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
     message("Applying glms for each GROUP ...")
 
-    out_time <- system.time( lgroup_gcf <- pblapply(list_groupset, gcf_glm_apply,
-                                                    std_method=std_method, min_obs=min_obs, cl=cl) )
+    out_time <- system.time(lgroup_gcf <- pblapply(list_groupset, gcf_glm_apply, POS=POS,
+                                                   std_method=std_method, min_obs=min_obs, cl=cl) )
 
     message("Parallel processing times (in seconds):")
     print(out_time)
@@ -179,10 +174,10 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
   }else{
 
     #Lapply gcf function for all species
-    lgroup_gcf <- lapply(list_groupset,function(X){
+    lgroup_gcf <- lapply(list_groupset,function(X, POS, std_method){
       message("Group: ", unique(X$GROUP))
       tryCatch(
-        gcf_glm_apply(SET=X, std_method=std_method)
+        gcf_glm_apply(SET=X, POS=POS, std_method=std_method)
 
         ,#End of code expresssion
         error=function(cond){
@@ -193,7 +188,9 @@ gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
           message(unique(X$GROUP) , ": " , trimws(cond))
         }
       )
-    }) #END lapply
+    },
+    POS=POS,
+    std_method=std_method) #END lapply
 
     message("Done.")
   } #END else
