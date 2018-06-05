@@ -24,11 +24,11 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
     stop("Parameter SET found as a list object.")
   }
 
-  #Filter groups with small positive-observation numbers
-  SET <- data.table(SET)
-  POS <- SET[DENSITY>0]
-  pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
-  SET <- subset(SET, METHOD %in% pos_obs_methods)
+  # #Filter groups with small positive-observation numbers
+  # SET <- data.table(SET)
+  # POS <- SET[DENSITY>0]
+  # pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
+  # SET <- subset(SET, METHOD %in% pos_obs_methods)
 
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
@@ -138,11 +138,19 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
 
+  # #Filter groups with small positive-observation numbers
+  SET <- data.table(SET)
+  POS <- SET[DENSITY>0]
+  pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
+  SET <- subset(SET, METHOD %in% pos_obs_methods)
+
   #Split the dataset into a list of smaller sets by GROUP value.
   message("Splitting dataset by GROUP value ... ")
   list_groupset <- split(SET, SET$GROUP)
 
   if(do_parallel){
+
+    #Check SET is data.table object
 
     #Parallel processing section
     message("Setting up parallel processing clusters ...")
