@@ -1,6 +1,6 @@
 # Calibr
 
-Calibr is a R-Package designed to process highly diverse species datasets and the ablity to analyse them with statistical models, such as the _Generalized Linear Model_ (GLM) and the _Generalized Linear Mixed Model_ (GLMM), to obtian standarization factors.
+Calibr is an R package designed to calibrate species-rich population abundance data collected with different survey methods. It uses statistical models, such as the _Generalized Linear Model_ (GLM) and the _Generalized Linear Mixed Model_ (GLMM), to obtain standardization factors and convert all data to a single standard method.
 
 ## Github Disclaimer
 
