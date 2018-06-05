@@ -30,6 +30,17 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
   pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
   SET <- subset(SET, METHOD %in% pos_obs_methods)
 
+  if(nrow(POS) <= min_obs){
+    stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
+
+  }
+  if(length(unique(POS$METHOD)) != 2){
+    nmethods <- length(unique(POS$METHOD))
+    stop("Postive-only GLM require 2 unique gear methods: ", nmethods, " gear method(s) found.")
+
+  }
+
+
   SET$METHOD <- as.factor(SET$METHOD)
   SET$BLOCK  <- as.factor(SET$BLOCK)
   contrasts(SET$METHOD) <- c(0,1)
