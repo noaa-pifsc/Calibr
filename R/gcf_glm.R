@@ -27,8 +27,6 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
   #Filter groups with small positive-observation numbers
   SET <- data.table(SET)
   POS <- SET[DENSITY>0]
-  pos_obs_methods <- names(table(POS$METHOD) >= min_obs)
-  SET <- subset(SET, METHOD %in% pos_obs_methods)
 
   if(nrow(POS) <= min_obs){
     stop("Number of Postive-only Observations below minimum limit of ", min_obs,".")
@@ -148,6 +146,17 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 #' @export
 gcf_glm <- function(SET, std_method, min_obs=10, do_parallel=TRUE) {
 
+
+  #Filter groups with small positive-observation numbers
+  message("Filtering out GROUP(s) with ", min_obs, " positive-observation(s) or less ... ")
+  SET <- data.table(SET)
+  POS <- SET[DENSITY>0]
+  sig_pos_obs <- names(table(POS$GROUP)[table(POS$GROUP) > min_obs])
+  SET <- subset(SET, GROUP %in% sig_pos_obs)
+
+  message("Filtering out GROUP(s) with positive-observations without a standard and secondary METHOD ...")
+  groups_2methods <- POS[, .(UniqueMethods = length(unique(METHOD))), by=.(GROUP)][order(GROUP)][UniqueMethods==2]
+  SET<- subset(SET, GROUP %in% groups_2methods$GROUP)
 
   #Split the dataset into a list of smaller sets by GROUP value.
   message("Splitting dataset by GROUP value ... ")
