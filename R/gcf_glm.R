@@ -20,7 +20,7 @@ if(getRversion() >= "2.15.1")  {
 gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 
 
-  if(class(SET) == "list"){
+  if(any(class(SET) %in% "list")){
     stop("Parameter SET found as a list object.")
   }
 
