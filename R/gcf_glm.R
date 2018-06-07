@@ -1,6 +1,6 @@
 #Bindings for "global variables"
 if(getRversion() >= "2.15.1")  {
-   utils::globalVariables(c("METHOD", "PRESENCE", "DENSITY"))
+   utils::globalVariables(c("METHOD", "PRESENCE", "DENSITY", "GROUP"))
 }
 
 #' Gear Calibration Factor summary table
