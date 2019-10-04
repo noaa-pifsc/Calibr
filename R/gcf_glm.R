@@ -64,9 +64,11 @@ gcf_glm_apply <- function (SET, std_method, min_obs=10) {
 
   mu.pos.method     <- glm.pos$coefficients[2]
   SD.pos.method     <- summary(glm.pos)$coefficients[2,2]
-  GCF.pos           <- exp(mu.pos.method)
-  pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
-  GCF.pos.dist      <- exp(pos.method)
+  #GCF.pos          <- exp(mu.pos.method)
+  GCF.pos           <- exp(mu.pos.method+SD.pos.method^2/2)
+  #pos.method        <- rnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
+  #GCF.pos.dist      <- exp(pos.method)
+  GCF.pos.dist      <- rlnorm(n=1000,mean=mu.pos.method,sd=SD.pos.method)
   GCF.pos.quantile  <- format(quantile(GCF.pos.dist,c(0.5,.025,0.975),na.rm=T), digits=4)
 
   #calibrate_dataset-------------------------------------------------------------------
