@@ -18,21 +18,34 @@ install_github("marcnadon/Calibr")
 
 ## Example 
 
-This is how to run the Calibr package using the example simulated dataset included in the package.
+This is how to run the Calibr package using the example dataset included in the package.
 
 ```
 require(data.table) 
 require(Calibr)
 
-SET <- SIMDATA
+SET <- SMALL_UNPAIR
 ```
+Note:
+Look at the the SMALL_UNPAIR data set for proper way to format the data input.
+The headers are:
+GROUP: The species or other taxonomic grouping to split the analysis into.
+BLOCK: The space-time blocks to control for difference in abundance (e.g. "2017_South_Maui").
+REP: Data replicates (e.g. individual sites).
+METHOD: The sampling method used (has to be limited to 2 methods, standard and secondary).
+DENSITY: Species abundance for each REP (e.g. counts, density, biomass, etc.)
+PRESENCE: Presence (1) or absence (0) of a GROUP at each REP. This value can also be a fraction if there were subreplicates within replicates
+(e.g. if a species is seen on transect 1 but not on transect 2, PRESENCE will equal 0.5)
 
-To Run the model and export results: 
+To Run the model and export results:
+```
+results <- run_calibr(SET,std_method="nSPC",stat_model="GLM")
+export_results(results)
 
 ```
-lresults <- run_calibr(SET,"nSPC","GLM")
-export_results(lresults)
-```
+Note:
+"std_method" defines the name of the standard method the secondary method's data need to be converted to.
+"stat_model" defines the type of model use to run the calibration analyses (either "GLM" or "GLMM").
 
 ## Output
 
