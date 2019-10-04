@@ -11,14 +11,14 @@ _This repository is a scientific product and is not official communication of th
 This is how to install the Calibr package.
 
 ```
-install.packages(devtools)
+install.packages("devtools")
 library(devtools)
 install_github("marcnadon/Calibr")
 ```
 
 ## Example 
 
-This is how to run the Calibr package using the "Example" dataset included in the package.
+This is how to run the Calibr package using the example simulated dataset included in the package.
 
 ```
 require(data.table) 
