@@ -54,20 +54,20 @@ For Windows users, the HOME directory is typically located at `C:/users/[USERNAM
 
 Two main files are generated in the output: "REP_summary"" which provides a breakdown of replicate sample sizes and "summary_table"" which presents the final results.
 
-The headers for REP_summary are as follows:
-GROUP: Same as above.
-NREP_TOTAL: Total number of replicates in the data set (both methods combined).This excludes replicates from BLOCKs where a specific GROUP was not found.
-NREP_STD_METHOD: Total number of replicates  in the data set for the standard method.
-NREP_SEC_METHOD: Total number of replicates  in the data set for the secondary method.
-POSREP_TOTAL: Total number of replicates where a specific GROUP was observed (positive, non-zero count)
-POSREP_STD_METHOD: Total number of replicates from standard method where a specific GROUP was observed (positive, non-zero count)
-POSREP_SEC_METHOD: Total number of replicates from secondary method where a specific GROUP was observed (positive, non-zero count)
+The headers for REP_summary are as follows:  
+GROUP: Same as above.  
+NREP_TOTAL: Total number of replicates in the data set (both methods combined).This excludes replicates from BLOCKs where a specific GROUP was not found.  
+NREP_STD_METHOD: Total number of replicates  in the data set for the standard method.  
+NREP_SEC_METHOD: Total number of replicates  in the data set for the secondary method.  
+POSREP_TOTAL: Total number of replicates where a specific GROUP was observed (positive, non-zero count).  
+POSREP_STD_METHOD: Total number of replicates from standard method where a specific GROUP was observed (positive, non-zero count).  
+POSREP_SEC_METHOD: Total number of replicates from secondary method where a specific GROUP was observed (positive, non-zero count).  
   
 The headers for summary_table are as follows:  
 GROUP: Same as above.  
 METHOD: Sampling method used.  
 GCF.PRES: Gear calibration factor for presence-absence data.  
-Convert probability of observation of secondary method following this equation: Prob_M1=inv.logit(logit(Prob_M2+GCF.PRES)))  
+Convert probability of observation of secondary method following this equation: Prob_M1=inv.logit(logit(Prob_M2-GCF.PRES)))  
 GCF.PRES_2.5: Lower bound of 95% probability interval of GCF.PRES.  
 GCF.PRES_95: Upper bound of 95% probability interval of GCF.PRES.  
 GCF.POS: Gear calibration factor for positive-only data.
