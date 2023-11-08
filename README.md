@@ -67,7 +67,7 @@ The headers for summary_table are as follows:
 GROUP: Same as above.  
 METHOD: Sampling method used.  
 GCF.PRES: Gear calibration factor for presence-absence data.  
-Convert probability of observation of secondary method following this equation: Prob_M1=inv.logit(logit(Prob_M2-GCF.PRES)))  
+Convert probability of observation of secondary method following this equation: Prob_M1=inv.logit(logit(Prob_M2)-GCF.PRES)  
 GCF.PRES_2.5: Lower bound of 95% probability interval of GCF.PRES.  
 GCF.PRES_95: Upper bound of 95% probability interval of GCF.PRES.  
 GCF.POS: Gear calibration factor for positive-only data.
