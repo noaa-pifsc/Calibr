@@ -13,7 +13,7 @@ This is how to install the Calibr package.
 ```
 install.packages("devtools")
 library(devtools)
-install_github("marcnadon/Calibr")
+install_github("noaa-pifsc/Calibr")
 ```
 
 ## Example 
