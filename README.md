@@ -2,6 +2,11 @@
 
 Calibr is an R package designed to calibrate species-rich population abundance data collected with different survey methods. It uses statistical models, the _Generalized Linear Model_ (GLM) and the _Generalized Linear Mixed Model_ (GLMM), to obtain standardization factors and convert all data to a single standard method.
 
+## Important note
+- This repository has been archived and is no longer maintained.
+- The code is provided for historical reference and may contain unpatched or unknown vulnerabilities.
+- It should not be used in production systems.
+
 ## Github Disclaimer
 
 _This repository is a scientific product and is not official communication of the National Oceanic and Atmospheric Administration, or the United States Department of Commerce. All NOAA GitHub project code is provided on an ‘as is’ basis and the user assumes responsibility for its use. Any claims against the Department of Commerce or Department of Commerce bureaus stemming from the use of this GitHub project will be governed by all applicable Federal law. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by the Department of Commerce. The Department of Commerce seal and logo, or the seal and logo of a DOC bureau, shall not be used in any manner to imply endorsement of any commercial product or activity by DOC or the United States Government._
